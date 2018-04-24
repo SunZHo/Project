@@ -1,0 +1,143 @@
+PODS:
+  - AFNetworking (3.2.0):
+    - AFNetworking/NSURLSession (= 3.2.0)
+    - AFNetworking/Reachability (= 3.2.0)
+    - AFNetworking/Security (= 3.2.0)
+    - AFNetworking/Serialization (= 3.2.0)
+    - AFNetworking/UIKit (= 3.2.0)
+  - AFNetworking/NSURLSession (3.2.0):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.2.0)
+  - AFNetworking/Security (3.2.0)
+  - AFNetworking/Serialization (3.2.0)
+  - AFNetworking/UIKit (3.2.0):
+    - AFNetworking/NSURLSession
+  - CYLTabBarController (1.17.6)
+  - DTCoreText (1.6.21):
+    - DTCoreText/Core (= 1.6.21)
+    - DTFoundation/Core (~> 1.7.5)
+    - DTFoundation/DTAnimatedGIF (~> 1.7.5)
+    - DTFoundation/DTHTMLParser (~> 1.7.5)
+    - DTFoundation/UIKit (~> 1.7.5)
+  - DTCoreText/Core (1.6.21):
+    - DTFoundation/Core (~> 1.7.5)
+    - DTFoundation/DTAnimatedGIF (~> 1.7.5)
+    - DTFoundation/DTHTMLParser (~> 1.7.5)
+    - DTFoundation/UIKit (~> 1.7.5)
+  - DTFoundation/Core (1.7.13)
+  - DTFoundation/DTAnimatedGIF (1.7.13)
+  - DTFoundation/DTHTMLParser (1.7.13):
+    - DTFoundation/Core
+  - DTFoundation/UIKit (1.7.13):
+    - DTFoundation/Core
+  - DZNEmptyDataSet (1.8.1)
+  - FDFullscreenPopGesture (1.1)
+  - FSCalendar (2.7.9)
+  - iCarousel (1.8.3)
+  - IQKeyboardManager (4.0.13)
+  - MBProgressHUD (1.1.0)
+  - MJExtension (3.0.13)
+  - MJRefresh (3.1.15.3)
+  - NSDictionary-NilSafe (0.2.0)
+  - PGDatePicker (2.0.6):
+    - PGPickerView
+  - PGPickerView (1.2.5)
+  - RegexKitLite (4.0)
+  - SDAutoLayout (2.2.0)
+  - SDWebImage (4.0.0):
+    - SDWebImage/Core (= 4.0.0)
+  - SDWebImage/Core (4.0.0)
+  - STPickerView (2.4)
+  - SVProgressHUD (2.2.2)
+  - TYCyclePagerView (1.1.0)
+  - UMCAnalytics (5.4.1):
+    - UMCCommon
+  - UMCCommon (1.4.1)
+  - UMCSecurityPlugins (1.0.6)
+  - UMCShare/Core (6.8.2):
+    - UMCCommon
+  - UMCShare/Social/ReducedQQ (6.8.2):
+    - UMCCommon
+    - UMCShare/Core
+  - UMCShare/Social/ReducedSina (6.8.2):
+    - UMCCommon
+    - UMCShare/Core
+  - UMCShare/Social/ReducedWeChat (6.8.2):
+    - UMCCommon
+    - UMCShare/Core
+  - UMCShare/UI (6.8.2):
+    - UMCCommon
+    - UMCShare/Core
+  - WRNavigationBar (1.2.0)
+  - YYCache (1.0.4)
+  - YYModel (1.0.4)
+  - YYText (1.0.7)
+
+DEPENDENCIES:
+  - AFNetworking
+  - CYLTabBarController (~> 1.17.4)
+  - DTCoreText
+  - DZNEmptyDataSet
+  - FDFullscreenPopGesture (~> 1.1)
+  - FSCalendar (~> 2.7.9)
+  - iCarousel
+  - IQKeyboardManager (~> 4.0.8)
+  - MBProgressHUD
+  - MJExtension
+  - MJRefresh (~> 3.1.12)
+  - NSDictionary-NilSafe
+  - PGDatePicker
+  - RegexKitLite (~> 4.0)
+  - SDAutoLayout
+  - SDWebImage (~> 4.0.0)
+  - STPickerView (= 2.4)
+  - SVProgressHUD (~> 2.2.2)
+  - TYCyclePagerView
+  - UMCAnalytics
+  - UMCCommon
+  - UMCSecurityPlugins
+  - UMCShare/Social/ReducedQQ
+  - UMCShare/Social/ReducedSina
+  - UMCShare/Social/ReducedWeChat
+  - UMCShare/UI
+  - WRNavigationBar
+  - YYCache
+  - YYModel (~> 1.0.4)
+  - YYText (~> 1.0.7)
+
+SPEC CHECKSUMS:
+  AFNetworking: 8ac6017b94ea105479f7776e5288e48ae9c59bb4
+  CYLTabBarController: c374643dea6dadece8bdff9c70f7387f8ffd7d08
+  DTCoreText: e5d688cffc9f6a61eddd1a4f94e2046851230de3
+  DTFoundation: f03be9fd786f11e505bb8fc44e2a3732bf0917df
+  DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
+  FDFullscreenPopGesture: a8a620179e3d9c40e8e00256dcee1c1a27c6d0f0
+  FSCalendar: a04b09f16f811bc92e82f3cf852a15225233b9d5
+  iCarousel: d782f635afac190c49bb8ee455882284cff8b85f
+  IQKeyboardManager: 8eab4d8111418414619d1df8e4779ce5d0f8d7e2
+  MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
+  MJExtension: 5932755f451458eefa24239358817f8d291240c7
+  MJRefresh: b48380ae2b927b46c4ef000de9adb8dc748e1df7
+  NSDictionary-NilSafe: 3df5056bf920974cb9822ed24bfc41af44225201
+  PGDatePicker: 7205233bf287dfc4b4d141c8795d9777342c2b64
+  PGPickerView: 9108fb2b52ba5ec40cccddb1d480fd7ab7b1bb0b
+  RegexKitLite: c0e4c12e6e7de0769f3a3ed679f0f61604170661
+  SDAutoLayout: c5509e77ae75735d9a39f7bc83dba6d3f75d49d8
+  SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
+  STPickerView: d0e234f230f45bd720a6739d0ae9fbddf038958b
+  SVProgressHUD: 59b2d3dabacbd051576d21d32293ca7228dc18b0
+  TYCyclePagerView: b70858c9b5d0e80e1e3129ff5ceb027eb0f76d44
+  UMCAnalytics: 44e0bb2f442b7aaf97d1c924b58798b612f2c13d
+  UMCCommon: ed0b882a939c45850f6803a5837698572a3e9b96
+  UMCSecurityPlugins: 0831a08f3988f3cea9f1d3a7626cd9bee4fef150
+  UMCShare: ab74e3c818cd305846609b15b0daf36872213c28
+  WRNavigationBar: dc952230effbb646785f962587caaac06c60f229
+  YYCache: 8105b6638f5e849296c71f331ff83891a4942952
+  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
+  YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
+
+PODFILE CHECKSUM: 919d507417f9561f7cd4e5496d3a672dcff72279
+
+COCOAPODS: 1.4.0

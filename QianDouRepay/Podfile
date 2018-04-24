@@ -1,0 +1,61 @@
+platform :ios,’8.0’
+
+target "QianDouRepay" do
+
+pod 'AFNetworking'
+
+pod 'MJExtension'
+
+pod 'MJRefresh', '~> 3.1.12'
+
+pod 'MBProgressHUD'
+
+pod 'SDWebImage', '~> 4.0.0'
+
+pod 'IQKeyboardManager','~> 4.0.8'
+
+pod 'FDFullscreenPopGesture', '~> 1.1'
+
+pod 'DZNEmptyDataSet'
+
+pod 'SDAutoLayout'
+
+#字典为空时不crash
+pod 'NSDictionary-NilSafe'
+
+#日历
+pod 'FSCalendar', '~> 2.7.9'
+
+#好玩的轮播
+pod 'iCarousel'
+
+pod 'DTCoreText'
+
+pod 'YYText', '~> 1.0.7'
+
+pod 'YYCache'
+
+pod 'YYModel', '~> 1.0.4'
+
+pod 'PGDatePicker'
+
+#友盟
+pod 'UMCCommon'
+pod 'UMCSecurityPlugins'
+pod 'UMCAnalytics'
+pod 'UMCShare/UI'
+pod 'UMCShare/Social/ReducedWeChat'
+pod 'UMCShare/Social/ReducedQQ'
+pod 'UMCShare/Social/ReducedSina'
+
+pod 'RegexKitLite', '~> 4.0'
+
+#tabbar Navgation
+
+pod 'CYLTabBarController', '~> 1.17.4'
+pod 'WRNavigationBar'
+pod 'SVProgressHUD', '~> 2.2.2'
+pod 'TYCyclePagerView'
+pod 'STPickerView', '2.4'
+
+end

@@ -1,0 +1,84 @@
+//
+//  PrefixHeader.pch
+//  QianDouRepay
+//
+//  Created by <15>帝云科技 on 2018/4/9.
+//  Copyright © 2018年 帝云科技<15>. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#import "NetApi.h"
+#import "Define.h"
+
+#pragma mark - 系统
+#import <CommonCrypto/CommonDigest.h>
+
+
+#pragma mark - 第三方
+#import "MJRefresh.h"
+#import "MBProgressHUD.h"
+#import "AFNetworking.h"
+#import "MJExtension.h"
+#import "IQKeyboardManager.h"
+#import "YYCache.h"
+#import "CYLTabBarControllerConfig.h"
+#import <CYLTabBarController/CYLTabBarController.h>
+#import <WRNavigationBar/WRCustomNavigationBar.h>
+#import <WRNavigationBar.h>
+#import <SDAutoLayout.h>
+#import <SVProgressHUD.h>
+#import <STPickerSingle.h>
+#import <STPickerDate.h>
+
+
+#pragma mark - 分类
+#import "AppDelegate+UMeng.h"
+#import "NSDate+Extend.h"
+#import "NSDate+Extension.h"
+#import "NSObject+ALiHUD.h"
+#import "UIImage+shadowImg.h"
+
+
+#pragma mark - 工具
+#import "AppCommon.h"
+#import "AppNetworking.h"
+#import "BaseTableView.h"
+#import "AppUIKit.h"
+#import "BDImagePicker.h"
+#import "XTimer.h"
+#import "FormCell.h"
+#import "FormCellModel.h"
+#import "FKGPopOption.h"
+#import "FSScrollContentView.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 友盟分享
+
+#define ChannelName         @"App Store" //渠道名称
+#define UMSocialAppKey      @"5ade7e77b27b0a2c160002ec"
+#define WechatAppKey        @""
+#define WechatAppSecret     @""
+#define WeChatRedirectURL   @""
+#define QQAppKey            @""
+#define QQAppSecrect        @""
+#define QQRedirectURL       @""
+#define SinaAppKey          @""
+#define SinaAppSecrect      @""
+#define SinaRedirectURL     @"http://sns.whalecloud.com/sina2/callback"
+
+
+#endif /* PrefixHeader_pch */
