@@ -10,8 +10,16 @@
 
 @interface BankCardModel : BaseModel
 
-@property (nonatomic , copy) NSString *bankName;
-@property (nonatomic , copy) NSString *bankCardNum;
+// id 储蓄卡id
+
+/** 银行名称 */
+@property (nonatomic , copy) NSString *bank_name;
+/** 银行卡号 */
+@property (nonatomic , copy) NSString *bank_num;
+/** 姓名 */
 @property (nonatomic , copy) NSString *name;
+
+/** 是否可解绑 */
+@property (nonatomic , assign) BOOL isUnbind ;
 
 @end

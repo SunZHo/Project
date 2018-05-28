@@ -19,6 +19,9 @@
 
 @property (nonatomic , strong) NSMutableArray *listData;
 
+@property (nonatomic , assign) NSInteger page ;
+@property (nonatomic , assign) NSInteger totalpage ;
+
 @end
 
 @implementation PromotionViewController
@@ -26,50 +29,123 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = self.navTitle;
-    
-    
-    for (int i = 0; i < 10; i++) {
-        PromotionModel *model = [[PromotionModel alloc]init];
-        model.time = @"2018-01-12 14:30";
-        model.name = @"王晓晓";
-        model.phone = @"188****2211";
-        if (i % 2 == 1) {
-            model.isRealName = @"1";
-            model.vipType = @"VIP会员";
-        }else{
-            model.isRealName = @"0";
-            model.vipType = @"普通会员";
-        }
-        
-        [self.listData addObject:model];
-    }
-    
     [self.view addSubview:self.table];
+    self.view.backgroundColor = WhiteColor;
+    
+    [self loadData];
+    
+    
 }
+
+- (void)loadData{
+    [self.listData removeAllObjects];
+    self.page = 1;
+    NSString *direct = [self.navTitle isEqualToString:@"直接推广"] ? @"1" : @"2"; // 推广类型 1-直推，2-间推
+    NSDictionary *dic = @{@"userid":UserID,
+                          @"direct":direct,
+                          @"status":@"1",
+                          @"page" : [NSString stringWithFormat:@"%ld",self.page]
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_VIPFriendList withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.totalpage  = [[infoDic objectForKey:@"all_page"] integerValue];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *dicc in arr) {
+            PromotionModel *model = [PromotionModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+    
+}
+
+- (void)loadMoreData{
+    self.page ++;
+    if (self.page >= self.totalpage) {
+        [self.table.mj_footer endRefreshingWithNoMoreData];
+        return;
+    }
+    NSString *direct = [self.navTitle isEqualToString:@"直接推广"] ? @"1" : @"2"; // 推广类型 1-直推，2-间推
+    NSDictionary *dic = @{@"userid":UserID,
+                          @"direct":direct,
+                          @"status":@"1",
+                          @"page" : [NSString stringWithFormat:@"%ld",self.page]
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_VIPFriendList withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *dicc in arr) {
+            PromotionModel *model = [PromotionModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+}
+
 
 
 
 #pragma mark - table
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.listData.count;
-    
+    if (self.listData.count > 0) {
+        return self.listData.count;
+    }else{
+        return 1;
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 65;
+    if (self.listData.count > 0) {
+        return 65;
+    }else{
+        return 180;
+    }
+    
 }
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    PromotionModel *model = [self.listData objectAtIndex:indexPath.row];
-    static NSString *identifiyImg = @"PromotionCell";
-    PromotionCell *cell = [tableView dequeueReusableCellWithIdentifier:identifiyImg];
-    if (!cell) {
-        cell = [[PromotionCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifiyImg];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    if (self.listData.count > 0) {
+        PromotionModel *model = [self.listData objectAtIndex:indexPath.row];
+        static NSString *identifiyImg = @"PromotionCell";
+        PromotionCell *cell = [tableView dequeueReusableCellWithIdentifier:identifiyImg];
+        if (!cell) {
+            cell = [[PromotionCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifiyImg];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        
+        [cell setPromotionModel:model];
+        return cell;
+    }else{
+        static NSString *identifiyImg = @"NoreplyCell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifiyImg];
+        if (!cell) {
+            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifiyImg];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.separatorInset = UIEdgeInsetsMake(0, SCREEN_WIDTH, 0, 0);
+        }
+        UIImageView *img = [[UIImageView alloc]init];
+        img.image = [UIImage imageNamed:@"zwsj"];
+        [cell.contentView addSubview:img];
+        img.sd_layout.topSpaceToView(cell.contentView, 35).widthIs(103).heightIs(103).centerXEqualToView(cell.contentView);
+        
+        UILabel *textLabel = [[UILabel alloc]init];
+        textLabel.font = kFont(15);
+        textLabel.textColor = defaultTextColor;
+        textLabel.textAlignment = NSTextAlignmentCenter;
+        textLabel.text = @"暂无数据";
+        [cell.contentView addSubview:textLabel];
+        textLabel.sd_layout.topSpaceToView(img, 15).widthIs(100).heightIs(16).centerXEqualToView(cell.contentView);
+        
+        return cell;
     }
-    
-    [cell setPromotionModel:model];
-    return cell;
     
 }
 
@@ -82,6 +158,15 @@
         _table.dataSource = self;
         _table.delegate = self;
         _table.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+        _table.backgroundColor = WhiteColor;
+        __weak typeof(&*self)weakSelf = self;
+        _table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [weakSelf loadData];
+        }];
+        
+        _table.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [weakSelf loadMoreData];
+        }];
     }
     return _table;
 }

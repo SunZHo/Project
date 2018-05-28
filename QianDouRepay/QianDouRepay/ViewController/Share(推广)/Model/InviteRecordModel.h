@@ -10,8 +10,11 @@
 
 @interface InviteRecordModel : BaseModel
 
+/** 手机号 */
 @property (nonatomic , copy) NSString *phone;
-@property (nonatomic , copy) NSString *state;
-@property (nonatomic , copy) NSString *time;
+/** 是否认证1-已认证0-未认证 */
+@property (nonatomic , copy) NSString *is_confirm;
+/** 注册时间 */
+@property (nonatomic , copy) NSString *add_time;
 
 @end

@@ -10,8 +10,11 @@
 
 @interface CashRecordModel : BaseModel
 
+/** 时间 */
 @property (nonatomic , copy) NSString *time;
-@property (nonatomic , copy) NSString *type;
+/** 状态：0-处理中，1-成功2-失败 */
+@property (nonatomic , copy) NSString *status;
+/** 金额 */
 @property (nonatomic , copy) NSString *money;
 
 @end

@@ -15,17 +15,20 @@
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         
         self.backImg = [[UIImageView alloc]initWithImage:IMG(@"kj")];
+        self.backImg.userInteractionEnabled = YES;
         
         self.nameLabel = [AppUIKit labelWithTitle:@"" titleFontSize:15 textColor:WhiteColor backgroundColor:nil alignment:0];
         
         self.cardNumLabel = [AppUIKit labelWithTitle:@"" titleFontSize:18 textColor:WhiteColor backgroundColor:nil alignment:0];
-        
+        self.unBindBtn = [AppUIKit createBtnWithType:UIButtonTypeCustom backgroundColor:WhiteColor action:@selector(unBindClick) target:self title:@"解绑" image:nil font:14 textColor:HEXACOLOR(0x5cb7ff)];
+        self.unBindBtn.layer.cornerRadius = 4;
         
         
         [self.contentView sd_addSubviews:@[self.backImg
                                            ]];
         [self.backImg sd_addSubviews:@[self.nameLabel,
-                                       self.cardNumLabel]];
+                                       self.cardNumLabel,
+                                       self.unBindBtn]];
         [self autoLayout];
     }
     return self;
@@ -46,14 +49,49 @@
     .topSpaceToView(self.nameLabel, 19)
     .rightEqualToView(self.nameLabel)
     .heightIs(15);
+    
+    self.unBindBtn.sd_layout.topSpaceToView(self.backImg, 10).rightSpaceToView(self.backImg, 10).widthIs(60).heightIs(25);
+}
+
+
+- (void)unBindClick{
+    if (self.unBindBlock) {
+        self.unBindBlock();
+    }
 }
 
 
 - (void)setChooseModel:(ChooseCreditCardModel *)chooseModel{
-    self.nameLabel.text = chooseModel.bankName;
-    self.cardNumLabel.text = chooseModel.cardNum;
-    
+    self.nameLabel.text = chooseModel.name;
+    self.cardNumLabel.text = [self getNewBankNumWitOldBankNum:chooseModel.bank_num];
 }
 
-
+- (NSString *)getNewBankNumWitOldBankNum:(NSString *)bankNum
+{
+    NSMutableString *mutableStr;
+    if (bankNum.length) {
+        mutableStr = [NSMutableString stringWithString:bankNum];
+        for (int i = 0 ; i < mutableStr.length; i ++) {
+            if (i>3&&i<mutableStr.length - 3) {
+                [mutableStr replaceCharactersInRange:NSMakeRange(i, 1) withString:@"*"];
+            }
+        }
+        NSString *text = mutableStr;
+        NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789\b"];
+        text = [text stringByReplacingOccurrencesOfString:@" " withString:@""];
+        NSString *newString = @"";
+        while (text.length > 0) {
+            NSString *subString = [text substringToIndex:MIN(text.length, 4)];
+            newString = [newString stringByAppendingString:subString];
+            if (subString.length == 4) {
+                newString = [newString stringByAppendingString:@" "];
+            }
+            text = [text substringFromIndex:MIN(text.length, 4)];
+        }
+        newString = [newString stringByTrimmingCharactersInSet:[characterSet invertedSet]];
+        return newString;
+    }
+    return bankNum;
+    
+}
 @end

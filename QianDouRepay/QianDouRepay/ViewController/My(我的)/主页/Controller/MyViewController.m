@@ -32,6 +32,9 @@
 @end
 
 @implementation MyViewController
+- (void)viewWillAppear:(BOOL)animated{
+    [self loadData];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -90,7 +93,83 @@
 
 - (void)logOut{
     NSLog(@"点击退出登录");
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self showSuccessText:@"退出成功"];
+        ApplicationDelegate.userInfoManager.loginStatus = @"0";
+        ApplicationDelegate.userInfoManager.userId = @"0";
+        [ApplicationDelegate.userInfoManager.userInfo setObject:@"0" forKey:@"uid"];
+        [ApplicationDelegate.userInfoManager.userInfo setObject:@"0" forKey:@"loginStatus"];
+        [UserInfoCache archiveUserInfo:ApplicationDelegate.userInfoManager.userInfo keyedArchiveName:USER_INFO_CACHE];
+        CYLTabBarController *tabbar = [self cyl_tabBarController];
+        [tabbar cyl_popSelectTabBarChildViewControllerAtIndex:0];
+    });
 }
+
+
+
+- (void)loadData{
+    NSDictionary *dic = @{@"userid" : UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_accountInfo withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+         // 昵称
+        [UserInfoDic setObject:[infoDic objectForKey:@"nickname"] forKey:@"nickname"];
+         // 手机号
+        [UserInfoDic setObject:[infoDic objectForKey:@"phone"]  forKey:@"phone"];
+         // 账户余额
+        [UserInfoDic setObject:[infoDic objectForKey:@"account_money"] forKey:@"account_money"];
+        // 是否升级推广员 1-是，0-否
+        [UserInfoDic setObject:[infoDic objectForKey:@"is_vip"] forKey:@"is_vip"];
+        // 提现卡 1-已绑卡，0-未绑卡
+        [UserInfoDic setObject:[infoDic objectForKey:@"cash_bank"] forKey:@"cash_bank"];
+        // 还款费率
+        [UserInfoDic setObject:[infoDic objectForKey:@"pay_cost"] forKey:@"pay_cost"];
+        // 还款单笔固定手续费
+        [UserInfoDic setObject:[infoDic objectForKey:@"cash_fee"] forKey:@"cash_fee"];
+        // 收款费率
+        [UserInfoDic setObject:[infoDic objectForKey:@"get_cost"] forKey:@"get_cost"];
+        // 收款单笔固定手续费
+        [UserInfoDic setObject:[infoDic objectForKey:@"get_fee"] forKey:@"get_fee"];
+        // 系统编号：邀请码
+        [UserInfoDic setObject:[infoDic objectForKey:@"sys_code"] forKey:@"sys_code"];
+        // 实名状态：1-是，0-否
+        [UserInfoDic setObject:[infoDic objectForKey:@"is_confirm"] forKey:@"is_confirm"];
+        // 提现手续费
+        [UserInfoDic setObject:[infoDic objectForKey:@"member_cash"] forKey:@"member_cash"];
+        // 真实姓名
+        [UserInfoDic setObject:[infoDic objectForKey:@"realname"] forKey:@"realname"];
+        // 身份证号码
+        [UserInfoDic setObject:[infoDic objectForKey:@"idcard"] forKey:@"idcard"];
+        // 性别：0-保密，1-男，2-女
+        [UserInfoDic setObject:[infoDic objectForKey:@"sex"] forKey:@"sex"];
+        // 用户头像
+        [UserInfoDic setObject:[infoDic objectForKey:@"avatar"] forKey:@"avatar"];
+        // 用户类型：4：推广员 5：普通会员
+        [UserInfoDic setObject:[infoDic objectForKey:@"user_type"] forKey:@"user_type"];
+        
+        [UserInfoCache archiveUserInfo:UserInfoDic keyedArchiveName:USER_INFO_CACHE];
+        if ([[infoDic objectForKey:@"user_type"] integerValue] == 4) {
+            self.tableHeadView.VIPLabel.text = @"推广员";
+        }else{
+            self.tableHeadView.VIPLabel.text = @"普通用户";
+        }
+        self.tableHeadView.nameLabel.text = [infoDic objectForKey:@"nickname"];
+        [self.tableHeadView.headImg sd_setImageWithURL:[NSURL URLWithString:[infoDic objectForKey:@"avatar"]]
+                                      placeholderImage:IMG(@"tx")];
+        self.tableHeadView.moneyLabel.text = [NSString stringWithFormat:@"账户余额：￥%@",[infoDic objectForKey:@"account_money"]];
+        
+        NSInteger count = [[infoDic objectForKey:@"new_msg"] integerValue];
+        if (count > 0) {
+            [self.navigationItem.rightBarButtonItem pp_addDotWithColor:WhiteColor];
+        }else{
+            [self.navigationItem.rightBarButtonItem pp_hiddenBadge];
+        }
+        [self.table.mj_header endRefreshing];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+}
+
+
 
 #pragma mark - UITableViewDataSource && UITableViewDelegate
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -113,11 +192,9 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0 && indexPath.row == 0) {
-//        self.tableHeadView.headImg.backgroundColor = [UIColor redColor];
         SafeCenterViewController *safeVC = [[SafeCenterViewController alloc]init];
         PUSHVC(safeVC);
     }else if (indexPath.section == 0 && indexPath.row == 1){
-//        self.tableHeadView.VIPLabel.text = @"VVVIP";
         FundsFlowViewController *fundsVC = [[FundsFlowViewController alloc]init];
         PUSHVC(fundsVC);
     }else if (indexPath.section == 0 && indexPath.row == 2){
@@ -125,7 +202,6 @@
         MyVIPViewController *vipVC = [[MyVIPViewController alloc]init];
         PUSHVC(vipVC);
     }else if (indexPath.section == 0 && indexPath.row == 3){
-//        self.tableHeadView.nameLabel.text = @"马云";
         MySuperiorViewController *superiorVC = [[MySuperiorViewController alloc]init];
         PUSHVC(superiorVC);
         
@@ -158,6 +234,9 @@
         _table.dataSource = self;
         _table.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         _table.tableFooterView = self.tableFootView;
+        _table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [self loadData];
+        }];
     }
     return _table;
 }

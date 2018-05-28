@@ -10,11 +10,26 @@
 
 @interface RepayPlanListModel : BaseModel
 
+// id
+
+/** uid */
+@property (nonatomic , copy) NSString *uid;
+/** 卡id */
+@property (nonatomic , copy) NSString  *cardid;
+/** 计划金  */
+@property (nonatomic , copy) NSString  *money;
+/** 初次消费额  */
+@property (nonatomic , copy) NSString  *first_money;
+/** 二次消费额  */
+@property (nonatomic , copy) NSString  *second_money;
+/** - */
 @property (nonatomic , copy) NSString  *time;
-@property (nonatomic , copy) NSString  *plan;
-@property (nonatomic , copy) NSString  *total;
-@property (nonatomic , copy) NSString  *first;
-@property (nonatomic , copy) NSString  *second;
-@property (nonatomic , copy) NSString  *fee;
+/** 计划时间  */
+@property (nonatomic , copy) NSString  *plan_time;
+@property (nonatomic , copy) NSString *add_time;
+/** 手续费  */
+@property (nonatomic , copy) NSString *fee_money;
+/** 还款金额 */
+@property (nonatomic , copy) NSString *repayment_money;
 
 @end

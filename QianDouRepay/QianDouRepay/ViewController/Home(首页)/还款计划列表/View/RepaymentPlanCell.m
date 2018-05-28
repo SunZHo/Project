@@ -49,9 +49,9 @@
 
 - (void)setRepaymentModel:(RepaymentPlanModel *)repaymentModel{
     _repaymentModel = repaymentModel;
-    self.timeLabel.text = repaymentModel.time;
-    self.typeLabel.text = repaymentModel.type;
-    self.moneyLabel.text = repaymentModel.money;
+    self.timeLabel.text = [NSDate timeStringFromTimestamp:[repaymentModel.add_time integerValue] formatter:@"yyyy-MM-dd"];
+    self.typeLabel.text = @"还款";
+    self.moneyLabel.text = [NSString stringWithFormat:@"￥%@",repaymentModel.money];
     
     
 }

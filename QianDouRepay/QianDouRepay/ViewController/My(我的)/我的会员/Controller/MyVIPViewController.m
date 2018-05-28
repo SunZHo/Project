@@ -34,20 +34,28 @@
 }
 
 - (void)loadData{
-    NSString *money = @"234";
-    NSString *people = @"12";
     
-    self.peopleLabel.text = [NSString stringWithFormat:@"%@位",people];
-    self.moneyLabel.text = [NSString stringWithFormat:@"￥%@",money];
-    
-    self.peopleLabel.attributedText = [AppCommon getRange:NSMakeRange(0, people.length) labelStr:[NSString stringWithFormat:@"%@位",people] Font:kFont(30) Color:WhiteColor];
-    
-    self.moneyLabel.attributedText = [AppCommon getRange:NSMakeRange(@"￥".length, money.length) labelStr:[NSString stringWithFormat:@"￥%@",money] Font:kFont(30) Color:WhiteColor];
-    
-    
-    self.titleArray = @[@"直接推广",@"间接推广"];
-    self.valueArray = @[@"15人",@"15人"];
-    
+    NSDictionary *dic = @{@"userid" : UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_VIPFriend withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSString *money = [infoDic objectForKey:@"account_money"];
+        NSString *people = [NSString stringWithFormat:@"%ld",[[infoDic objectForKey:@"all_count"] integerValue]];
+        self.peopleLabel.text = [NSString stringWithFormat:@"%@位",people];
+        self.moneyLabel.text = [NSString stringWithFormat:@"￥%@",money];
+        
+        self.peopleLabel.attributedText = [AppCommon getRange:NSMakeRange(0, people.length) labelStr:[NSString stringWithFormat:@"%@位",people] Font:kFont(30) Color:WhiteColor];
+        
+        self.moneyLabel.attributedText = [AppCommon getRange:NSMakeRange(@"￥".length, money.length) labelStr:[NSString stringWithFormat:@"￥%@",money] Font:kFont(30) Color:WhiteColor];
+        
+        NSString *ztCount = [NSString stringWithFormat:@"%@人",[infoDic objectForKey:@"zt_count"]]; // 邀请用户数 :直推
+        NSString *jtCount = [NSString stringWithFormat:@"%@人",[infoDic objectForKey:@"jt_count"]]; // 邀请用户数 :间推
+        self.titleArray = @[@"直接推广",@"间接推广"];
+        self.valueArray = @[ztCount,jtCount];
+        [self.table reloadData];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
     
 }
 

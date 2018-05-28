@@ -10,4 +10,10 @@
 
 @interface RepaymentPlanListVC : BaseViewController
 
+/** 信用卡id */
+@property (nonatomic , copy) NSString *cardid;
+
+/** 计划是否执行完成 */
+@property (nonatomic , assign) BOOL isFinish ;
+
 @end

@@ -10,8 +10,12 @@
 
 @interface ChooseCreditCardModel : BaseModel
 
-@property (nonatomic , copy) NSString *cardNum;
-
-@property (nonatomic , copy) NSString *bankName;
+// id
+/** 银行联行号 */
+@property (nonatomic , copy) NSString *bank_liannum;
+/** 银行名称 */
+@property (nonatomic , copy) NSString *name;
+/** 卡号 */
+@property (nonatomic , copy) NSString *bank_num;
 
 @end

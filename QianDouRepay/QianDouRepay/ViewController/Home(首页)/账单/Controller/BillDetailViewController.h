@@ -10,6 +10,9 @@
 
 @interface BillDetailViewController : BaseViewController
 
+/** 状态 */
 @property (nonatomic , copy) NSString *status;
+/** 账单id */
+@property (nonatomic , copy) NSString *orderid;
 
 @end

@@ -28,7 +28,7 @@
 
 - (void)makeUI{
     self.backgroundColor = WhiteColor;
-    UIView *topLine =[[UIView alloc]init];
+    UIView *topLine = [[UIView alloc]init];
     topLine.backgroundColor = Default_BackgroundGray;
     [self addSubview:topLine];
     
@@ -74,9 +74,9 @@
 
 - (void)setCardModel:(CreditCardModel *)cardModel{
     _cardModel = cardModel;
-    self.moneyLabel.text = cardModel.money;
-    self.billLabel.text = cardModel.BillDay;
-    self.repayLabel.text = cardModel.repayDay;
+    self.moneyLabel.text = [NSString stringWithFormat:@"￥%@",cardModel.money];
+    self.billLabel.text = [NSString stringWithFormat:@"每月%@日",cardModel.statement_date];
+    self.repayLabel.text = [NSString stringWithFormat:@"每月%@日",cardModel.repayment_date];
 }
 
 

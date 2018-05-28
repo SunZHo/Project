@@ -10,8 +10,12 @@
 
 @interface FundsFlowModel : BaseModel
 
+// id  流水id
+/** 时间 */
 @property (nonatomic , copy) NSString *time;
+/** 推广奖励-1  分润流水-2  提现审核中-3  提现成功-4  提现失败-5 */
 @property (nonatomic , copy) NSString *type;
+/** 影响金额 */
 @property (nonatomic , copy) NSString *money;
 
 @end

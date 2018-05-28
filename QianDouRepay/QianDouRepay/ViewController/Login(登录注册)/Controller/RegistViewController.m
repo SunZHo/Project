@@ -10,6 +10,7 @@
 #import "FormCell.h"
 #import "FormCellModel.h"
 #import "LoginHeadView.h"
+#import "AgreementViewController.h"
 
 @interface RegistViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -20,6 +21,7 @@
 @property (nonatomic , strong) UIButton *sureBtn;  // 注册
 @property (nonatomic , strong) UIButton *xieyiBtn; // 协议
 @property (nonatomic , strong) UIButton *loginBtn; // 已有账号，立即登录
+@property (nonatomic , copy) NSString *verifyCode;
 
 @end
 
@@ -93,6 +95,9 @@
     cell.cellTextFieldBlock = ^(NSString *text) {
         [self notiTextField:text andIndex:indexPath];
     };
+    cell.getVerifyCodeBlock = ^{
+        [self getVerifyCode];
+    };
     
     [cell setFormcellModel:model];
     return cell;
@@ -116,7 +121,7 @@
     model1.canEdit = YES;
     model1.boardType = UIKeyboardTypeNumberPad;
     model1.placeHolder = @"请输入您的手机号";
-    model1.reqKey = @"";
+    model1.reqKey = @"phone";
     
     FormCellModel *model2 = [[FormCellModel alloc]init];
     model2.cellType = cellTypeIcon_FieldVeirfyCodeType;
@@ -125,7 +130,7 @@
     model2.canEdit = YES;
     model2.boardType = UIKeyboardTypeNumberPad;
     model2.placeHolder = @"请输入短信验证码";
-    model2.reqKey = @"";
+    model2.reqKey = @"smscode";
     
     FormCellModel *model3 = [[FormCellModel alloc]init];
     model3.cellType = cellTypeIcon_FieldType;
@@ -135,7 +140,7 @@
     model3.isSecureText = YES;
     model3.boardType = UIKeyboardTypeDefault;
     model3.placeHolder = @"请输入密码";
-    model3.reqKey = @"";
+    model3.reqKey = @"pass";
     
     FormCellModel *model4 = [[FormCellModel alloc]init];
     model4.cellType = cellTypeIcon_FieldType;
@@ -145,7 +150,7 @@
     model4.isSecureText = YES;
     model4.boardType = UIKeyboardTypeDefault;
     model4.placeHolder = @"请再次输入密码";
-    model4.reqKey = @"";
+    model4.reqKey = @"repass";
     
     FormCellModel *model5 = [[FormCellModel alloc]init];
     model5.cellType = cellTypeIcon_FieldType;
@@ -154,7 +159,7 @@
     model5.canEdit = YES;
     model5.boardType = UIKeyboardTypeDefault;
     model5.placeHolder = @"请输入邀请码(选填)";
-    model5.reqKey = @"";
+    model5.reqKey = @"code";
     
     [self.formData addObjectsFromArray:@[model1,model2,model3,model4,model5]];
 }
@@ -162,26 +167,91 @@
 #pragma mark - 按钮点击
 
 - (void)sureClick{
-    for (FormCellModel *model in self.formData) {
-        if ([model.reqKey isEqualToString:@""]) { // 排除非必填选项
-            if ([model.text isEqualToString:@""] || model.text == nil) {
-                [self showErrorText:@"请填写完整信息"];
-                return;
-            }
-        }
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    FormCellModel *model0 = self.formData[0];
+    FormCellModel *model1 = self.formData[1];
+    FormCellModel *model2 = self.formData[2];
+    FormCellModel *model3 = self.formData[3];
+    FormCellModel *model4 = self.formData[4];
+    if ([model0.text isEqualToString:@""]) {
+        [self showErrorText:@"请填写手机号"];
+        return;
     }
+    if ([model1.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入短信验证码"];
+        return;
+    }
+    if (![model1.text isEqualToString:self.verifyCode]) {
+        [self showErrorText:@"验证码错误"];
+        return;
+    }
+    if ([model2.text isEqualToString:@""]) {
+        [self showErrorText:@"请填写密码"];
+        return;
+    }
+    if (![model2.text isEqualToString:model3.text]) {
+        [self showErrorText:@"两次输入密码不一致"];
+        return;
+    }
+    [dic setValue:model0.text forKey:@"phone"];
+    [dic setValue:model2.text forKey:@"pass"];
+    [dic setValue:model4.text forKey:@"code"];
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:regUrl withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSString *phone = [infoDic objectForKey:@"phone"];
+        NSString *uid = [infoDic objectForKey:@"id"];
+        NSString *nickName = [infoDic objectForKey:@"nick_name"];
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        [dic setValue:uid forKey:@"uid"];
+        [dic setValue:@"1" forKey:@"loginStatus"];
+        [dic setValue:phone forKey:@"phone"];
+        [dic setValue:nickName forKey:@"nickname"];
+        [dic setValue:@"" forKey:@"avatar"];
+        ApplicationDelegate.userInfoManager.userInfo = dic;
+        ApplicationDelegate.userInfoManager.userId = uid;
+        ApplicationDelegate.userInfoManager.loginStatus = @"1";
+        [UserInfoCache archiveUserInfo:dic keyedArchiveName:USER_INFO_CACHE];
+        [self showSuccessText:@"注册成功"];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+        });
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
     
 }
 
 - (void)xieyiClick{
-    
+    AgreementViewController *agreevc = [[AgreementViewController alloc]init];
+    PUSHVC(agreevc);
 }
 
 - (void)loginClick{
     POPVC;
 }
 
-
+- (void)getVerifyCode{
+    NSString *phone = @"";
+    FormCellModel *model = self.formData[0];
+    phone = model.text;
+    
+    if (![phone isEqualToString:@""]) {
+        NSDictionary *dic = @{@"phone" : phone};
+        [self showLoading];
+        [AppNetworking requestWithType:HttpRequestTypePost withUrlString:regSmsUrl withParaments:dic withSuccessBlock:^(id json){
+            [self dismissLoading];
+            NSDictionary *infoDic = [json objectForKey:@"info"];
+            self.verifyCode = [NSString stringWithFormat:@"%ld",[[infoDic objectForKey:@"code"] integerValue]];
+            [[NSNotificationCenter defaultCenter]postNotificationName:CountingDownNotiName object:nil];
+        } withFailureBlock:^(NSString *errorMessage, int code) {
+            
+        }];
+    }else{
+        [self showErrorText:@"请填写手机号"];
+    }
+}
 
 #pragma mark - LazyLoad
 

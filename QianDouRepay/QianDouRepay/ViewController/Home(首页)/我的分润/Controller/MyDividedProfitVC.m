@@ -49,20 +49,37 @@
 
 
 - (void)loadData{
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//
-//    });
-    [self.topBlueView removeFromSuperview];
-    [self.collectionV removeFromSuperview];
-    self.totalMoney = @"100.00";
-    self.topBlueView = nil;
-    self.collectionV = nil;
-    [self.backGroundScrollV addSubview:self.topBlueView];
-    [self.backGroundScrollV addSubview:self.collectionV];
     
-    [self.view layoutSubviews];
-    [self makeUI];
-    [_backGroundScrollV.mj_header endRefreshing];
+    NSDictionary *dic = @{@"userid":UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:home_MyBackMoney withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        // 累计收益
+        NSString *leiji = [NSString stringWithFormat:@"%.2f",[[infoDic objectForKey:@"leiji"] floatValue]];
+        // 收款分润
+        NSString *leijishou = [NSString stringWithFormat:@"%.2f",[[infoDic objectForKey:@"leijishou"] floatValue]];
+        // 还款金额
+        NSString *leijihuan = [NSString stringWithFormat:@"%.2f",[[infoDic objectForKey:@"leijihuan"] floatValue]];
+        // 可提现
+        NSString *account_money = [NSString stringWithFormat:@"%.2f",[[infoDic objectForKey:@"account_money"] floatValue]];
+        // 冻结金额
+        NSString *freeze_money = [NSString stringWithFormat:@"%.2f",[[infoDic objectForKey:@"freeze_money"] floatValue]];
+        self.valueArray = @[account_money,freeze_money,leijishou,leijihuan];
+        self.totalMoney = leiji;
+        
+        [self.topBlueView removeFromSuperview];
+        [self.collectionV removeFromSuperview];
+        self.topBlueView = nil;
+        self.collectionV = nil;
+        [self.backGroundScrollV addSubview:self.topBlueView];
+        [self.backGroundScrollV addSubview:self.collectionV];
+        
+        [self.view layoutSubviews];
+        [self makeUI];
+        [_backGroundScrollV.mj_header endRefreshing];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
     
 }
 
@@ -154,14 +171,14 @@
 
 - (NSArray *)nameArray{
     if (!_nameArray) {
-        _nameArray = @[@"可提现分润(元)",@"冻结金额(元)",@"收款分润(元)",@"还款金额(元)",];
+        _nameArray = @[@"可提现分润(元)",@"冻结金额(元)",@"收款分润(元)",@"还款金额(元)"];
     }
     return _nameArray;
 }
 
 - (NSArray *)valueArray{
     if (!_valueArray) {
-        _valueArray = @[@"0.00",@"0.00",@"0.00",@"0.00",];
+        _valueArray = @[@"0.00",@"0.00",@"0.00",@"0.00"];
     }
     return _valueArray;
 }

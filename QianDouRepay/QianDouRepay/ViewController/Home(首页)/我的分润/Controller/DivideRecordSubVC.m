@@ -20,6 +20,9 @@
 
 @property (nonatomic , strong) NSMutableArray *listData;
 
+@property (nonatomic , assign) NSInteger page ;
+@property (nonatomic , assign) NSInteger totalpage ;
+
 @end
 
 @implementation DivideRecordSubVC
@@ -27,21 +30,85 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navlineV.alpha = 0;
-    for (int i = 0; i < 20; i++) {
-        MyDivideProfitModel *model = [[MyDivideProfitModel alloc]init];
-        model.phone = @"155****0134";
-        model.time = @"2018-03-29 14:32";
-        if ([self.title isEqualToString:@"收款分润"]) {
-            model.money = @"收款:500元";
-        }else{
-            model.money = @"还款:500元";
-        }
-        
-        model.divide = @"分润:10元";
-        [self.listData addObject:model];
-    }
+//    for (int i = 0; i < 20; i++) {
+//        MyDivideProfitModel *model = [[MyDivideProfitModel alloc]init];
+//        model.phone = @"155****0134";
+//        model.time = @"2018-03-29 14:32";
+//        if ([self.title isEqualToString:@"收款分润"]) {
+//            model.money = @"收款:500元";
+//        }else{
+//            model.money = @"还款:500元";
+//        }
+//
+//        model.divide = @"分润:10元";
+//        [self.listData addObject:model];
+//    }
     [self.view addSubview:self.table];
+    
+    [self loadData];
 }
+
+- (void)loadData{
+    self.page = 1;
+    NSString *type = @"";
+    if ([self.title isEqualToString:@"收款分润"]) {
+        type = @"2";
+    }else{
+        type = @"1";
+    }
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{@"page" : [NSString stringWithFormat:@"%ld",self.page],
+                          @"userid":UserID,
+                          @"type":type
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:home_MyBackMoneyRecord withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.totalpage  = [[infoDic objectForKey:@"all_page"] integerValue];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *dicc in arr) {
+            MyDivideProfitModel *model = [MyDivideProfitModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+}
+
+
+- (void)loadMoreData{
+    self.page ++;
+    if (self.page >= self.totalpage) {
+        [self.table.mj_footer endRefreshingWithNoMoreData];
+        return;
+    }
+    NSString *type = @"";
+    if ([self.title isEqualToString:@"收款分润"]) {
+        type = @"2";
+    }else{
+        type = @"1";
+    }
+    NSDictionary *dic = @{@"page" : [NSString stringWithFormat:@"%ld",self.page],
+                          @"userid":UserID,
+                          @"type":type
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:home_MyBackMoneyRecord withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *dicc in arr) {
+            MyDivideProfitModel *model = [MyDivideProfitModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+}
+
 
 #pragma mark - table
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -117,7 +184,15 @@
         _table.dataSource = self;
         _table.delegate = self;
         _table.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-//        _table.backgroundColor = WhiteColor;
+        _table.backgroundColor = WhiteColor;
+        __weak typeof(&*self)weakSelf = self;
+        _table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [weakSelf loadData];
+        }];
+        
+        _table.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [weakSelf loadMoreData];
+        }];
     }
     return _table;
 }

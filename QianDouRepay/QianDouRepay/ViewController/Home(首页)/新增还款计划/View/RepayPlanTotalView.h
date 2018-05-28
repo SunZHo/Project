@@ -10,6 +10,10 @@
 
 @interface RepayPlanTotalView : UIView
 
+-(instancetype)initWithFrame:(CGRect)frame infoDic:(NSDictionary *)dic;
+
+@property (nonatomic, copy) void (^sureCommitBlock)(void);
+
 - (void)show;
 
 @end

@@ -19,6 +19,9 @@
 
 @property (nonatomic , strong) NSMutableArray *listData;
 
+@property (nonatomic , assign) NSInteger page ;
+@property (nonatomic , assign) NSInteger totalpage ;
+
 @end
 
 @implementation CashRecordViewController
@@ -27,25 +30,60 @@
     [super viewDidLoad];
     self.title = @"提现记录";
     self.view.backgroundColor = WhiteColor;
-    for (int i = 0; i < 10; i++) {
-        CashRecordModel *model = [[CashRecordModel alloc]init];
-        model.time = @"2018-01-12 14:30";
-        if (i % 2 == 1) {
-            model.money = @"￥100.00";
-            model.type = @"提现成功";
-            
-        }else{
-            model.money = @"￥100.00";
-            model.type = @"提现失败";
-        }
-        [self.listData addObject:model];
-    }
     
     [self.view addSubview:self.table];
+    [self loadData];
     
 }
 
+- (void)loadData{
+    self.page = 1;
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{@"page" : [NSString stringWithFormat:@"%ld",self.page],
+                          @"userid":UserID,
+                          @"type":@"T1"
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:takeOutCashRecord withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.totalpage  = [[infoDic objectForKey:@"all_page"] integerValue];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *dicc in arr) {
+            CashRecordModel *model = [CashRecordModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+}
 
+
+- (void)loadMoreData{
+    self.page ++;
+    if (self.page >= self.totalpage) {
+        [self.table.mj_footer endRefreshingWithNoMoreData];
+        return;
+    }
+    NSDictionary *dic = @{@"page" : [NSString stringWithFormat:@"%ld",self.page],
+                          @"userid":UserID,
+                          @"type":@"T1"
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:takeOutCashRecord withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *dicc in arr) {
+            CashRecordModel *model = [CashRecordModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+}
 
 
 
@@ -119,6 +157,14 @@
         _table.delegate        = self;
         _table.separatorStyle  = UITableViewCellSeparatorStyleSingleLine;
         _table.backgroundColor = WhiteColor;
+        __weak typeof(&*self)weakSelf = self;
+        _table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [weakSelf loadData];
+        }];
+        
+        _table.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [weakSelf loadMoreData];
+        }];
     }
     return _table;
 }

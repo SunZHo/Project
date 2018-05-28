@@ -113,8 +113,38 @@
 		B839DF3B2085814F00AA1488 /* FilterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B839DF3A2085814F00AA1488 /* FilterCell.m */; };
 		B839DF412085C0BA00AA1488 /* FundsFlowCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B839DF402085C0BA00AA1488 /* FundsFlowCell.m */; };
 		B839DF442085C1A300AA1488 /* FundsFlowModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B839DF432085C1A300AA1488 /* FundsFlowModel.m */; };
+		B84FBE8C209AA5FB00A06E6D /* UserInfoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBE8B209AA5FB00A06E6D /* UserInfoManager.m */; };
+		B84FBE8F209AA69F00A06E6D /* UserInfoCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBE8D209AA69E00A06E6D /* UserInfoCache.m */; };
+		B84FBE92209AB0B200A06E6D /* AgreementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBE91209AB0B200A06E6D /* AgreementViewController.m */; };
+		B84FBEA3209AB64600A06E6D /* SDCycleScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBE97209AB64500A06E6D /* SDCycleScrollView.m */; };
+		B84FBEA4209AB64600A06E6D /* UIView+SDExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBE98209AB64500A06E6D /* UIView+SDExtension.m */; };
+		B84FBEA5209AB64600A06E6D /* SDCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBE99209AB64500A06E6D /* SDCollectionViewCell.m */; };
+		B84FBEA6209AB64600A06E6D /* TADotView.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBE9C209AB64500A06E6D /* TADotView.m */; };
+		B84FBEA7209AB64600A06E6D /* TAPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBE9D209AB64500A06E6D /* TAPageControl.m */; };
+		B84FBEA8209AB64600A06E6D /* TAAnimatedDotView.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBE9E209AB64500A06E6D /* TAAnimatedDotView.m */; };
+		B84FBEA9209AB64600A06E6D /* TAAbstractDotView.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBE9F209AB64500A06E6D /* TAAbstractDotView.m */; };
+		B84FBEAD209BF62000A06E6D /* ChangeCreditCardVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBEAC209BF62000A06E6D /* ChangeCreditCardVC.m */; };
+		B84FBEB0209C506B00A06E6D /* AppCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBEAF209C506B00A06E6D /* AppCache.m */; };
+		B84FBEB4209C52ED00A06E6D /* BankInfoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBEB3209C52ED00A06E6D /* BankInfoModel.m */; };
+		B84FBEB7209C5A9600A06E6D /* PickAreaModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B84FBEB6209C5A9600A06E6D /* PickAreaModel.m */; };
 		B8710F21208D832400363478 /* AccountInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = B8710F20208D832400363478 /* AccountInfo.m */; };
-		B8710F65208EDAC200363478 /* TabBarVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B8710F64208EDAC200363478 /* TabBarVC.m */; };
+		B8710F7320905FA000363478 /* UplevelView.m in Sources */ = {isa = PBXBuildFile; fileRef = B8710F7220905FA000363478 /* UplevelView.m */; };
+		B8710F762090669300363478 /* ChoosePayWayVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B8710F752090669300363478 /* ChoosePayWayVC.m */; };
+		B8710F7C2090671800363478 /* PayWayModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B8710F7B2090671800363478 /* PayWayModel.m */; };
+		B8710F7F2090676F00363478 /* PayWayCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B8710F7E2090676F00363478 /* PayWayCell.m */; };
+		B8710F8220907B1700363478 /* QRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8710F8120907B1700363478 /* QRCodeViewController.m */; };
+		B878347520A136EC0063BE43 /* AddReceiptBankCardVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B878347420A136EC0063BE43 /* AddReceiptBankCardVC.m */; };
+		B878347820A13B4C0063BE43 /* AddReceiptCreditCardVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B878347720A13B4C0063BE43 /* AddReceiptCreditCardVC.m */; };
+		B878348D20A292010063BE43 /* BRStringPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = B878347C20A292010063BE43 /* BRStringPickerView.m */; };
+		B878348E20A292010063BE43 /* NSDate+BRPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = B878348120A292010063BE43 /* NSDate+BRPickerView.m */; };
+		B878348F20A292010063BE43 /* BRDatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = B878348220A292010063BE43 /* BRDatePickerView.m */; };
+		B878349020A292010063BE43 /* BRBaseView.m in Sources */ = {isa = PBXBuildFile; fileRef = B878348520A292010063BE43 /* BRBaseView.m */; };
+		B878349120A292010063BE43 /* BRAddressModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B878348820A292010063BE43 /* BRAddressModel.m */; };
+		B878349220A292010063BE43 /* BRPickerView.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B878348A20A292010063BE43 /* BRPickerView.bundle */; };
+		B878349320A292010063BE43 /* BRAddressPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = B878348C20A292010063BE43 /* BRAddressPickerView.m */; };
+		B878349620A3E4B30063BE43 /* QDWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B878349520A3E4B30063BE43 /* QDWebViewController.m */; };
+		B878349920A3F1FB0063BE43 /* QuickCollectRecordModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B878349820A3F1FB0063BE43 /* QuickCollectRecordModel.m */; };
+		B87834D520AD108A0063BE43 /* AuthorizedView.m in Sources */ = {isa = PBXBuildFile; fileRef = B87834D420AD10890063BE43 /* AuthorizedView.m */; };
 		B8A827A0207AF21F00DED30B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B8A8279F207AF21F00DED30B /* AppDelegate.m */; };
 		B8A827A3207AF21F00DED30B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B8A827A2207AF21F00DED30B /* ViewController.m */; };
 		B8A827A6207AF21F00DED30B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B8A827A4207AF21F00DED30B /* Main.storyboard */; };
@@ -379,10 +409,71 @@
 		B839DF402085C0BA00AA1488 /* FundsFlowCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FundsFlowCell.m; sourceTree = "<group>"; };
 		B839DF422085C1A300AA1488 /* FundsFlowModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FundsFlowModel.h; sourceTree = "<group>"; };
 		B839DF432085C1A300AA1488 /* FundsFlowModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FundsFlowModel.m; sourceTree = "<group>"; };
+		B84FBE8A209AA5FB00A06E6D /* UserInfoManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserInfoManager.h; sourceTree = "<group>"; };
+		B84FBE8B209AA5FB00A06E6D /* UserInfoManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserInfoManager.m; sourceTree = "<group>"; };
+		B84FBE8D209AA69E00A06E6D /* UserInfoCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserInfoCache.m; sourceTree = "<group>"; };
+		B84FBE8E209AA69F00A06E6D /* UserInfoCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInfoCache.h; sourceTree = "<group>"; };
+		B84FBE90209AB0B200A06E6D /* AgreementViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AgreementViewController.h; sourceTree = "<group>"; };
+		B84FBE91209AB0B200A06E6D /* AgreementViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AgreementViewController.m; sourceTree = "<group>"; };
+		B84FBE94209AB64500A06E6D /* UIView+SDExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SDExtension.h"; sourceTree = "<group>"; };
+		B84FBE95209AB64500A06E6D /* SDCycleScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCycleScrollView.h; sourceTree = "<group>"; };
+		B84FBE96209AB64500A06E6D /* SDCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDCollectionViewCell.h; sourceTree = "<group>"; };
+		B84FBE97209AB64500A06E6D /* SDCycleScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCycleScrollView.m; sourceTree = "<group>"; };
+		B84FBE98209AB64500A06E6D /* UIView+SDExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SDExtension.m"; sourceTree = "<group>"; };
+		B84FBE99209AB64500A06E6D /* SDCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDCollectionViewCell.m; sourceTree = "<group>"; };
+		B84FBE9B209AB64500A06E6D /* TAAbstractDotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAAbstractDotView.h; sourceTree = "<group>"; };
+		B84FBE9C209AB64500A06E6D /* TADotView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TADotView.m; sourceTree = "<group>"; };
+		B84FBE9D209AB64500A06E6D /* TAPageControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TAPageControl.m; sourceTree = "<group>"; };
+		B84FBE9E209AB64500A06E6D /* TAAnimatedDotView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TAAnimatedDotView.m; sourceTree = "<group>"; };
+		B84FBE9F209AB64500A06E6D /* TAAbstractDotView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TAAbstractDotView.m; sourceTree = "<group>"; };
+		B84FBEA0209AB64500A06E6D /* TADotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TADotView.h; sourceTree = "<group>"; };
+		B84FBEA1209AB64500A06E6D /* TAAnimatedDotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAAnimatedDotView.h; sourceTree = "<group>"; };
+		B84FBEA2209AB64500A06E6D /* TAPageControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAPageControl.h; sourceTree = "<group>"; };
+		B84FBEAB209BF62000A06E6D /* ChangeCreditCardVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChangeCreditCardVC.h; sourceTree = "<group>"; };
+		B84FBEAC209BF62000A06E6D /* ChangeCreditCardVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChangeCreditCardVC.m; sourceTree = "<group>"; };
+		B84FBEAE209C506B00A06E6D /* AppCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppCache.h; sourceTree = "<group>"; };
+		B84FBEAF209C506B00A06E6D /* AppCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppCache.m; sourceTree = "<group>"; };
+		B84FBEB2209C52ED00A06E6D /* BankInfoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BankInfoModel.h; sourceTree = "<group>"; };
+		B84FBEB3209C52ED00A06E6D /* BankInfoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BankInfoModel.m; sourceTree = "<group>"; };
+		B84FBEB5209C5A9600A06E6D /* PickAreaModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PickAreaModel.h; sourceTree = "<group>"; };
+		B84FBEB6209C5A9600A06E6D /* PickAreaModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PickAreaModel.m; sourceTree = "<group>"; };
 		B8710F1F208D832400363478 /* AccountInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountInfo.h; sourceTree = "<group>"; };
 		B8710F20208D832400363478 /* AccountInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountInfo.m; sourceTree = "<group>"; };
-		B8710F63208EDAC200363478 /* TabBarVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TabBarVC.h; sourceTree = "<group>"; };
-		B8710F64208EDAC200363478 /* TabBarVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabBarVC.m; sourceTree = "<group>"; };
+		B8710F7120905FA000363478 /* UplevelView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UplevelView.h; sourceTree = "<group>"; };
+		B8710F7220905FA000363478 /* UplevelView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UplevelView.m; sourceTree = "<group>"; };
+		B8710F742090669300363478 /* ChoosePayWayVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChoosePayWayVC.h; sourceTree = "<group>"; };
+		B8710F752090669300363478 /* ChoosePayWayVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChoosePayWayVC.m; sourceTree = "<group>"; };
+		B8710F7A2090671800363478 /* PayWayModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PayWayModel.h; sourceTree = "<group>"; };
+		B8710F7B2090671800363478 /* PayWayModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PayWayModel.m; sourceTree = "<group>"; };
+		B8710F7D2090676F00363478 /* PayWayCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PayWayCell.h; sourceTree = "<group>"; };
+		B8710F7E2090676F00363478 /* PayWayCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PayWayCell.m; sourceTree = "<group>"; };
+		B8710F8020907B1700363478 /* QRCodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QRCodeViewController.h; sourceTree = "<group>"; };
+		B8710F8120907B1700363478 /* QRCodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QRCodeViewController.m; sourceTree = "<group>"; };
+		B878347320A136EC0063BE43 /* AddReceiptBankCardVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddReceiptBankCardVC.h; sourceTree = "<group>"; };
+		B878347420A136EC0063BE43 /* AddReceiptBankCardVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddReceiptBankCardVC.m; sourceTree = "<group>"; };
+		B878347620A13B4C0063BE43 /* AddReceiptCreditCardVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddReceiptCreditCardVC.h; sourceTree = "<group>"; };
+		B878347720A13B4C0063BE43 /* AddReceiptCreditCardVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddReceiptCreditCardVC.m; sourceTree = "<group>"; };
+		B878347B20A292010063BE43 /* BRStringPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRStringPickerView.h; sourceTree = "<group>"; };
+		B878347C20A292010063BE43 /* BRStringPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRStringPickerView.m; sourceTree = "<group>"; };
+		B878347D20A292010063BE43 /* BRPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRPickerView.h; sourceTree = "<group>"; };
+		B878347E20A292010063BE43 /* BRPickerViewMacro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRPickerViewMacro.h; sourceTree = "<group>"; };
+		B878348020A292010063BE43 /* BRDatePickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRDatePickerView.h; sourceTree = "<group>"; };
+		B878348120A292010063BE43 /* NSDate+BRPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+BRPickerView.m"; sourceTree = "<group>"; };
+		B878348220A292010063BE43 /* BRDatePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRDatePickerView.m; sourceTree = "<group>"; };
+		B878348320A292010063BE43 /* NSDate+BRPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+BRPickerView.h"; sourceTree = "<group>"; };
+		B878348520A292010063BE43 /* BRBaseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRBaseView.m; sourceTree = "<group>"; };
+		B878348620A292010063BE43 /* BRBaseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRBaseView.h; sourceTree = "<group>"; };
+		B878348820A292010063BE43 /* BRAddressModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRAddressModel.m; sourceTree = "<group>"; };
+		B878348920A292010063BE43 /* BRAddressPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRAddressPickerView.h; sourceTree = "<group>"; };
+		B878348A20A292010063BE43 /* BRPickerView.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = BRPickerView.bundle; sourceTree = "<group>"; };
+		B878348B20A292010063BE43 /* BRAddressModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRAddressModel.h; sourceTree = "<group>"; };
+		B878348C20A292010063BE43 /* BRAddressPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRAddressPickerView.m; sourceTree = "<group>"; };
+		B878349420A3E4B30063BE43 /* QDWebViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QDWebViewController.h; sourceTree = "<group>"; };
+		B878349520A3E4B30063BE43 /* QDWebViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QDWebViewController.m; sourceTree = "<group>"; };
+		B878349720A3F1FB0063BE43 /* QuickCollectRecordModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuickCollectRecordModel.h; sourceTree = "<group>"; };
+		B878349820A3F1FB0063BE43 /* QuickCollectRecordModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuickCollectRecordModel.m; sourceTree = "<group>"; };
+		B87834D320AD10890063BE43 /* AuthorizedView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthorizedView.h; sourceTree = "<group>"; };
+		B87834D420AD10890063BE43 /* AuthorizedView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthorizedView.m; sourceTree = "<group>"; };
 		B8A8279B207AF21F00DED30B /* QianDouRepay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QianDouRepay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8A8279E207AF21F00DED30B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B8A8279F207AF21F00DED30B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -531,6 +622,7 @@
 		B8089D76207B038A009BFAE4 /* App Common */ = {
 			isa = PBXGroup;
 			children = (
+				B84FBEB1209C52E100A06E6D /* 银行Model */,
 				B8089D77207B038A009BFAE4 /* AppCommon.h */,
 				B8089D7A207B038A009BFAE4 /* AppCommon.m */,
 				B8089D79207B038A009BFAE4 /* xhq_header.h */,
@@ -538,6 +630,10 @@
 				B8089D7B207B038A009BFAE4 /* AppNetworking.m */,
 				B8089E04207B3CE1009BFAE4 /* AppUIKit.h */,
 				B8089E05207B3CE1009BFAE4 /* AppUIKit.m */,
+				B84FBE8E209AA69F00A06E6D /* UserInfoCache.h */,
+				B84FBE8D209AA69E00A06E6D /* UserInfoCache.m */,
+				B84FBEAE209C506B00A06E6D /* AppCache.h */,
+				B84FBEAF209C506B00A06E6D /* AppCache.m */,
 			);
 			path = "App Common";
 			sourceTree = "<group>";
@@ -562,6 +658,8 @@
 				B8089DDE207B07E4009BFAE4 /* Share(推广) */,
 				B8089DE6207B07E4009BFAE4 /* My(我的) */,
 				B8089DE2207B07E4009BFAE4 /* Login(登录注册) */,
+				B878349420A3E4B30063BE43 /* QDWebViewController.h */,
+				B878349520A3E4B30063BE43 /* QDWebViewController.m */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -574,6 +672,7 @@
 				B8089E78207E0F1A009BFAE4 /* 新增还款计划 */,
 				B839DEAB2080440100AA1488 /* 快捷收款 */,
 				B839DE6C207EFDC100AA1488 /* 添加信用卡 */,
+				B84FBEAA209BF60C00A06E6D /* 修改信用卡 */,
 				B839DE79207F34D500AA1488 /* 还款计划列表 */,
 				B839DE89207F41ED00AA1488 /* 账单 */,
 				B839DEC720808C1500AA1488 /* 我的分润 */,
@@ -659,6 +758,8 @@
 				B8089DE4207B07E4009BFAE4 /* Model */,
 				B8089DE5207B07E4009BFAE4 /* View */,
 				B8710F1E208D830600363478 /* AccountInfo */,
+				B84FBE8A209AA5FB00A06E6D /* UserInfoManager.h */,
+				B84FBE8B209AA5FB00A06E6D /* UserInfoManager.m */,
 			);
 			path = "Login(登录注册)";
 			sourceTree = "<group>";
@@ -672,6 +773,8 @@
 				B8089DFE207B1C3C009BFAE4 /* RegistViewController.m */,
 				B8089E0D207B7430009BFAE4 /* ForgetPwdVC.h */,
 				B8089E0E207B7430009BFAE4 /* ForgetPwdVC.m */,
+				B84FBE90209AB0B200A06E6D /* AgreementViewController.h */,
+				B84FBE91209AB0B200A06E6D /* AgreementViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -775,6 +878,8 @@
 		B8089E10207C491C009BFAE4 /* Lib */ = {
 			isa = PBXGroup;
 			children = (
+				B878347920A292010063BE43 /* BRPickerView */,
+				B84FBE93209AB64500A06E6D /* SDCycleScrollView */,
 				B839DED220809C1900AA1488 /* FSScrollContentViewLib */,
 				B839DE96207F449A00AA1488 /* FKGPopOption */,
 				B8089E52207D9899009BFAE4 /* Timer */,
@@ -887,6 +992,8 @@
 				B8089E76207DFF00009BFAE4 /* MeunViewOverlayView.m */,
 				B839DF042084795C00AA1488 /* NoCreditCardView.h */,
 				B839DF052084795C00AA1488 /* NoCreditCardView.m */,
+				B87834D320AD10890063BE43 /* AuthorizedView.h */,
+				B87834D420AD10890063BE43 /* AuthorizedView.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -897,6 +1004,7 @@
 				B8089DDB207B07E4009BFAE4 /* Controller */,
 				B8089DDC207B07E4009BFAE4 /* Model */,
 				B8089DDD207B07E4009BFAE4 /* View */,
+				B8710F7020905F2F00363478 /* 我要升级 */,
 			);
 			path = "主页";
 			sourceTree = "<group>";
@@ -1108,8 +1216,12 @@
 				B839DEB920807B3500AA1488 /* CollectRecordVC.m */,
 				B839DEBB20807CF200AA1488 /* ChooseBankCardVC.h */,
 				B839DEBC20807CF200AA1488 /* ChooseBankCardVC.m */,
+				B878347320A136EC0063BE43 /* AddReceiptBankCardVC.h */,
+				B878347420A136EC0063BE43 /* AddReceiptBankCardVC.m */,
 				B839DEBE2080869200AA1488 /* ChooseCreditCardVC.h */,
 				B839DEBF2080869200AA1488 /* ChooseCreditCardVC.m */,
+				B878347620A13B4C0063BE43 /* AddReceiptCreditCardVC.h */,
+				B878347720A13B4C0063BE43 /* AddReceiptCreditCardVC.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1121,6 +1233,8 @@
 				B839DEB32080447100AA1488 /* QuickCollectionModel.m */,
 				B839DEC1208086DA00AA1488 /* ChooseCreditCardModel.h */,
 				B839DEC2208086DA00AA1488 /* ChooseCreditCardModel.m */,
+				B878349720A3F1FB0063BE43 /* QuickCollectRecordModel.h */,
+				B878349820A3F1FB0063BE43 /* QuickCollectRecordModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1289,6 +1403,8 @@
 		B839DF102084847B00AA1488 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				B84FBEB5209C5A9600A06E6D /* PickAreaModel.h */,
+				B84FBEB6209C5A9600A06E6D /* PickAreaModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1424,6 +1540,53 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		B84FBE93209AB64500A06E6D /* SDCycleScrollView */ = {
+			isa = PBXGroup;
+			children = (
+				B84FBE94209AB64500A06E6D /* UIView+SDExtension.h */,
+				B84FBE95209AB64500A06E6D /* SDCycleScrollView.h */,
+				B84FBE96209AB64500A06E6D /* SDCollectionViewCell.h */,
+				B84FBE97209AB64500A06E6D /* SDCycleScrollView.m */,
+				B84FBE98209AB64500A06E6D /* UIView+SDExtension.m */,
+				B84FBE99209AB64500A06E6D /* SDCollectionViewCell.m */,
+				B84FBE9A209AB64500A06E6D /* PageControl */,
+			);
+			path = SDCycleScrollView;
+			sourceTree = "<group>";
+		};
+		B84FBE9A209AB64500A06E6D /* PageControl */ = {
+			isa = PBXGroup;
+			children = (
+				B84FBE9B209AB64500A06E6D /* TAAbstractDotView.h */,
+				B84FBE9C209AB64500A06E6D /* TADotView.m */,
+				B84FBE9D209AB64500A06E6D /* TAPageControl.m */,
+				B84FBE9E209AB64500A06E6D /* TAAnimatedDotView.m */,
+				B84FBE9F209AB64500A06E6D /* TAAbstractDotView.m */,
+				B84FBEA0209AB64500A06E6D /* TADotView.h */,
+				B84FBEA1209AB64500A06E6D /* TAAnimatedDotView.h */,
+				B84FBEA2209AB64500A06E6D /* TAPageControl.h */,
+			);
+			path = PageControl;
+			sourceTree = "<group>";
+		};
+		B84FBEAA209BF60C00A06E6D /* 修改信用卡 */ = {
+			isa = PBXGroup;
+			children = (
+				B84FBEAB209BF62000A06E6D /* ChangeCreditCardVC.h */,
+				B84FBEAC209BF62000A06E6D /* ChangeCreditCardVC.m */,
+			);
+			path = "修改信用卡";
+			sourceTree = "<group>";
+		};
+		B84FBEB1209C52E100A06E6D /* 银行Model */ = {
+			isa = PBXGroup;
+			children = (
+				B84FBEB2209C52ED00A06E6D /* BankInfoModel.h */,
+				B84FBEB3209C52ED00A06E6D /* BankInfoModel.m */,
+			);
+			path = "银行Model";
+			sourceTree = "<group>";
+		};
 		B8710F1E208D830600363478 /* AccountInfo */ = {
 			isa = PBXGroup;
 			children = (
@@ -1431,6 +1594,101 @@
 				B8710F20208D832400363478 /* AccountInfo.m */,
 			);
 			path = AccountInfo;
+			sourceTree = "<group>";
+		};
+		B8710F7020905F2F00363478 /* 我要升级 */ = {
+			isa = PBXGroup;
+			children = (
+				B8710F77209066FE00363478 /* Controller */,
+				B8710F78209066FE00363478 /* Model */,
+				B8710F79209066FF00363478 /* View */,
+			);
+			path = "我要升级";
+			sourceTree = "<group>";
+		};
+		B8710F77209066FE00363478 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				B8710F742090669300363478 /* ChoosePayWayVC.h */,
+				B8710F752090669300363478 /* ChoosePayWayVC.m */,
+				B8710F8020907B1700363478 /* QRCodeViewController.h */,
+				B8710F8120907B1700363478 /* QRCodeViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		B8710F78209066FE00363478 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				B8710F7A2090671800363478 /* PayWayModel.h */,
+				B8710F7B2090671800363478 /* PayWayModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		B8710F79209066FF00363478 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B8710F7120905FA000363478 /* UplevelView.h */,
+				B8710F7220905FA000363478 /* UplevelView.m */,
+				B8710F7D2090676F00363478 /* PayWayCell.h */,
+				B8710F7E2090676F00363478 /* PayWayCell.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		B878347920A292010063BE43 /* BRPickerView */ = {
+			isa = PBXGroup;
+			children = (
+				B878347A20A292010063BE43 /* StringPickerView */,
+				B878347D20A292010063BE43 /* BRPickerView.h */,
+				B878347E20A292010063BE43 /* BRPickerViewMacro.h */,
+				B878347F20A292010063BE43 /* DatePickerView */,
+				B878348420A292010063BE43 /* Base */,
+				B878348720A292010063BE43 /* AddressPickerView */,
+			);
+			path = BRPickerView;
+			sourceTree = "<group>";
+		};
+		B878347A20A292010063BE43 /* StringPickerView */ = {
+			isa = PBXGroup;
+			children = (
+				B878347B20A292010063BE43 /* BRStringPickerView.h */,
+				B878347C20A292010063BE43 /* BRStringPickerView.m */,
+			);
+			path = StringPickerView;
+			sourceTree = "<group>";
+		};
+		B878347F20A292010063BE43 /* DatePickerView */ = {
+			isa = PBXGroup;
+			children = (
+				B878348020A292010063BE43 /* BRDatePickerView.h */,
+				B878348120A292010063BE43 /* NSDate+BRPickerView.m */,
+				B878348220A292010063BE43 /* BRDatePickerView.m */,
+				B878348320A292010063BE43 /* NSDate+BRPickerView.h */,
+			);
+			path = DatePickerView;
+			sourceTree = "<group>";
+		};
+		B878348420A292010063BE43 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				B878348520A292010063BE43 /* BRBaseView.m */,
+				B878348620A292010063BE43 /* BRBaseView.h */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		B878348720A292010063BE43 /* AddressPickerView */ = {
+			isa = PBXGroup;
+			children = (
+				B878348820A292010063BE43 /* BRAddressModel.m */,
+				B878348920A292010063BE43 /* BRAddressPickerView.h */,
+				B878348A20A292010063BE43 /* BRPickerView.bundle */,
+				B878348B20A292010063BE43 /* BRAddressModel.h */,
+				B878348C20A292010063BE43 /* BRAddressPickerView.m */,
+			);
+			path = AddressPickerView;
 			sourceTree = "<group>";
 		};
 		B8A82792207AF21F00DED30B = {
@@ -1470,8 +1728,6 @@
 				B8A827A2207AF21F00DED30B /* ViewController.m */,
 				B8A827AC207AF21F00DED30B /* Info.plist */,
 				B8089D6C207AFDE9009BFAE4 /* PrefixHeader.pch */,
-				B8710F63208EDAC200363478 /* TabBarVC.h */,
-				B8710F64208EDAC200363478 /* TabBarVC.m */,
 			);
 			path = QianDouRepay;
 			sourceTree = "<group>";
@@ -1781,6 +2037,7 @@
 			files = (
 				B8089E21207C4937009BFAE4 /* HUD_info@2x.png in Resources */,
 				B8089E1E207C4937009BFAE4 /* HUD_success@3x.png in Resources */,
+				B878349220A292010063BE43 /* BRPickerView.bundle in Resources */,
 				B8089E22207C4937009BFAE4 /* HUD_error@2x.png in Resources */,
 				B8089E1D207C4937009BFAE4 /* HUD_success@2x.png in Resources */,
 				B8089E1F207C4937009BFAE4 /* HUD_error@3x.png in Resources */,
@@ -1879,8 +2136,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B839DF382085810E00AA1488 /* FilterModel.m in Sources */,
+				B878347520A136EC0063BE43 /* AddReceiptBankCardVC.m in Sources */,
 				B8710F21208D832400363478 /* AccountInfo.m in Sources */,
 				B8E1194C20884C460009D2CE /* TakeCashResultView.m in Sources */,
+				B84FBEAD209BF62000A06E6D /* ChangeCreditCardVC.m in Sources */,
 				B839DEF12080A99900AA1488 /* MyDevideProfitCell.m in Sources */,
 				B8E1195220886B4D0009D2CE /* CashRecordModel.m in Sources */,
 				B839DE88207F3BFC00AA1488 /* RepaymentPlanDetailVC.m in Sources */,
@@ -1895,6 +2154,8 @@
 				B8E1195520886B5F0009D2CE /* CashRecordCell.m in Sources */,
 				B8089DED207B0FBB009BFAE4 /* BaseViewController.m in Sources */,
 				B839DF14208484A300AA1488 /* CertifyNameVC.m in Sources */,
+				B878347820A13B4C0063BE43 /* AddReceiptCreditCardVC.m in Sources */,
+				B84FBEB7209C5A9600A06E6D /* PickAreaModel.m in Sources */,
 				B839DED120808CB600AA1488 /* MyDividedProfitVC.m in Sources */,
 				B8E1195F20886EDB0009D2CE /* MessageModel.m in Sources */,
 				B839DF0D20847D4500AA1488 /* SafeCenterViewController.m in Sources */,
@@ -1903,22 +2164,30 @@
 				B839DE68207EF15000AA1488 /* RepayPlanListModel.m in Sources */,
 				B8089E60207DAEEF009BFAE4 /* CreditCardRepayVC.m in Sources */,
 				B839DF442085C1A300AA1488 /* FundsFlowModel.m in Sources */,
-				B8710F65208EDAC200363478 /* TabBarVC.m in Sources */,
 				B8E1194320882D0B0009D2CE /* TakeOutCashVC.m in Sources */,
 				B839DF29208498B100AA1488 /* BankCardModel.m in Sources */,
 				B8089E06207B3CE1009BFAE4 /* AppUIKit.m in Sources */,
 				B839DE72207EFDF400AA1488 /* AddCreditCardViewController.m in Sources */,
+				B84FBEA6209AB64600A06E6D /* TADotView.m in Sources */,
 				B8E1195C20886ECC0009D2CE /* MessageCell.m in Sources */,
 				B8089E27207C4CD6009BFAE4 /* AppGuideView.m in Sources */,
 				B8089E77207DFF00009BFAE4 /* MeunViewOverlayView.m in Sources */,
 				B839DEBD20807CF200AA1488 /* ChooseBankCardVC.m in Sources */,
 				B8EA11052085DF0300775406 /* PromotionViewController.m in Sources */,
 				B8089E42207C8C05009BFAE4 /* MyHeadView.m in Sources */,
+				B84FBE92209AB0B200A06E6D /* AgreementViewController.m in Sources */,
+				B87834D520AD108A0063BE43 /* AuthorizedView.m in Sources */,
 				B8F651D12086EC6A005ACF1E /* NoticeModel.m in Sources */,
+				B84FBE8C209AA5FB00A06E6D /* UserInfoManager.m in Sources */,
 				B839DE7F207F358B00AA1488 /* RepaymentPlanListVC.m in Sources */,
 				B839DEFD2080AA1A00AA1488 /* MyFeeRateSubVC.m in Sources */,
+				B878348E20A292010063BE43 /* NSDate+BRPickerView.m in Sources */,
+				B84FBEB0209C506B00A06E6D /* AppCache.m in Sources */,
+				B878349920A3F1FB0063BE43 /* QuickCollectRecordModel.m in Sources */,
+				B8710F7F2090676F00363478 /* PayWayCell.m in Sources */,
 				B8A827A3207AF21F00DED30B /* ViewController.m in Sources */,
 				B8E1196220886EE70009D2CE /* MessageViewController.m in Sources */,
+				B84FBEA8209AB64600A06E6D /* TAAnimatedDotView.m in Sources */,
 				B8089E6E207DB5E2009BFAE4 /* CreditCardRepayView.m in Sources */,
 				B839DE85207F360100AA1488 /* RepaymentPlanCell.m in Sources */,
 				B839DEF42080A9B800AA1488 /* ReciveFeeCell.m in Sources */,
@@ -1931,6 +2200,8 @@
 				B8089DD8207B05EF009BFAE4 /* NSDate+Extend.m in Sources */,
 				B8089E0F207B7430009BFAE4 /* ForgetPwdVC.m in Sources */,
 				B8089E09207B56F0009BFAE4 /* FormCell.m in Sources */,
+				B84FBEB4209C52ED00A06E6D /* BankInfoModel.m in Sources */,
+				B84FBEA5209AB64600A06E6D /* SDCollectionViewCell.m in Sources */,
 				B839DE82207F35E600AA1488 /* RepaymentPlanModel.m in Sources */,
 				B8EA10F32085C46600775406 /* FundsFlowDetailVC.m in Sources */,
 				B8089E0C207B5802009BFAE4 /* FormCellModel.m in Sources */,
@@ -1939,8 +2210,11 @@
 				B8F651D42086EC82005ACF1E /* NoticeCell.m in Sources */,
 				B8089E30207C5766009BFAE4 /* SettingCell.m in Sources */,
 				B839DF2C208498C200AA1488 /* BankCardCell.m in Sources */,
+				B84FBEA7209AB64600A06E6D /* TAPageControl.m in Sources */,
 				B839DEBA20807B3500AA1488 /* CollectRecordVC.m in Sources */,
 				B839DEC6208086EE00AA1488 /* ChooseCreditCardCell.m in Sources */,
+				B84FBE8F209AA69F00A06E6D /* UserInfoCache.m in Sources */,
+				B84FBEA3209AB64600A06E6D /* SDCycleScrollView.m in Sources */,
 				B8089E55207D9899009BFAE4 /* XTimer.m in Sources */,
 				B839DF0020842DD300AA1488 /* MyFeeRateModel.m in Sources */,
 				B839DEFA2080A9F200AA1488 /* MyFeeRateViewController.m in Sources */,
@@ -1951,6 +2225,8 @@
 				B839DE62207EED1700AA1488 /* ReplyPlanListVC.m in Sources */,
 				B839DF062084795C00AA1488 /* NoCreditCardView.m in Sources */,
 				B839DE9E207F57AA00AA1488 /* BillDetailViewController.m in Sources */,
+				B878348D20A292010063BE43 /* BRStringPickerView.m in Sources */,
+				B878349020A292010063BE43 /* BRBaseView.m in Sources */,
 				B8089E74207DFDDD009BFAE4 /* MeunViewHorizon.m in Sources */,
 				B839DF3520857AC600AA1488 /* FundsFilterView.m in Sources */,
 				B839DE92207F421400AA1488 /* BillModel.m in Sources */,
@@ -1959,16 +2235,21 @@
 				B839DEEE2080A94F00AA1488 /* MyDivideProfitModel.m in Sources */,
 				B8089DF9207B1244009BFAE4 /* MyViewController.m in Sources */,
 				B839DEB72080448000AA1488 /* QuickCollectionCell.m in Sources */,
+				B84FBEA4209AB64600A06E6D /* UIView+SDExtension.m in Sources */,
 				B839DEE22080A40A00AA1488 /* AppPageViewController.m in Sources */,
 				B839DE5E207EE3B800AA1488 /* CalendarCell.m in Sources */,
 				B8E1194620882D660009D2CE /* TakeOutCashBankView.m in Sources */,
 				B8089DD5207B05BB009BFAE4 /* NSDate+Extension.m in Sources */,
 				B839DE95207F422500AA1488 /* BillCell.m in Sources */,
+				B878349120A292010063BE43 /* BRAddressModel.m in Sources */,
 				B839DED820809C1A00AA1488 /* FSSegmentTitleView.m in Sources */,
+				B878349620A3E4B30063BE43 /* QDWebViewController.m in Sources */,
 				B839DF262084989E00AA1488 /* AddBankCardVC.m in Sources */,
 				B8089E2D207C5614009BFAE4 /* SettingViewController.m in Sources */,
 				B8EA10FA2085CFD400775406 /* MyVIPViewController.m in Sources */,
 				B839DEF72080A9C500AA1488 /* RepayFeeCell.m in Sources */,
+				B8710F762090669300363478 /* ChoosePayWayVC.m in Sources */,
+				B8710F7320905FA000363478 /* UplevelView.m in Sources */,
 				B839DED920809C1A00AA1488 /* FSPageContentView.m in Sources */,
 				B839DEC02080869200AA1488 /* ChooseCreditCardVC.m in Sources */,
 				B8E1193C2088255C0009D2CE /* AboutUsViewController.m in Sources */,
@@ -1979,6 +2260,7 @@
 				B8F651C32086D4D5005ACF1E /* UploadPicViewController.m in Sources */,
 				B8A827AE207AF21F00DED30B /* main.m in Sources */,
 				B8089E6B207DB531009BFAE4 /* CreditCardModel.m in Sources */,
+				B8710F7C2090671800363478 /* PayWayModel.m in Sources */,
 				B839DE75207F0C8200AA1488 /* OYCountDownManager.m in Sources */,
 				B8089E48207CA78B009BFAE4 /* MyTableViewCell.m in Sources */,
 				B839DF3B2085814F00AA1488 /* FilterCell.m in Sources */,
@@ -1990,16 +2272,20 @@
 				B8089E4E207CC228009BFAE4 /* HomeAboveView.m in Sources */,
 				B8089E23207C4937009BFAE4 /* NSObject+ALiHUD.m in Sources */,
 				B839DE65207EEDD500AA1488 /* RepayPlanListCell.m in Sources */,
+				B84FBEA9209AB64600A06E6D /* TAAbstractDotView.m in Sources */,
 				B8F651CE2086EC58005ACF1E /* NoticeViewController.m in Sources */,
 				B839DE6B207EF72400AA1488 /* RepayPlanTotalView.m in Sources */,
 				B8089DF6207B1238009BFAE4 /* ShareViewController.m in Sources */,
+				B878348F20A292010063BE43 /* BRDatePickerView.m in Sources */,
 				B8EA10F62085C48C00775406 /* FundsFlowViewController.m in Sources */,
 				B839DE5F207EE3B800AA1488 /* calenderView.m in Sources */,
 				B839DEA1207F602600AA1488 /* UIImage+shadowImg.m in Sources */,
 				B8089D7D207B038A009BFAE4 /* AppNetworking.m in Sources */,
+				B878349320A292010063BE43 /* BRAddressPickerView.m in Sources */,
 				B8089E68207DB4FD009BFAE4 /* BaseModel.m in Sources */,
 				B8089DF3207B1226009BFAE4 /* HomeViewController.m in Sources */,
 				B8089DFF207B1C3C009BFAE4 /* RegistViewController.m in Sources */,
+				B8710F8220907B1700363478 /* QRCodeViewController.m in Sources */,
 				B839DF412085C0BA00AA1488 /* FundsFlowCell.m in Sources */,
 				B8089E39207C6E6F009BFAE4 /* BDImagePicker.m in Sources */,
 				B8F651C72086E226005ACF1E /* MySuperiorViewController.m in Sources */,
@@ -2170,8 +2456,9 @@
 			baseConfigurationReference = 7CC21087DB47CE2DD0D1A486 /* Pods-QianDouRepay.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = A5WU5HGSL7;
+				DEVELOPMENT_TEAM = H6MZ8Y4Y5Q;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/QianDouRepay/PrefixHeader.pch";
 				INFOPLIST_FILE = QianDouRepay/Info.plist;
@@ -2179,6 +2466,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.qiandou.QianDouRepay;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -2188,8 +2476,9 @@
 			baseConfigurationReference = 47B996C24ADBCA75E09BC8FE /* Pods-QianDouRepay.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = A5WU5HGSL7;
+				DEVELOPMENT_TEAM = H6MZ8Y4Y5Q;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/QianDouRepay/PrefixHeader.pch";
 				INFOPLIST_FILE = QianDouRepay/Info.plist;
@@ -2197,6 +2486,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.qiandou.QianDouRepay;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

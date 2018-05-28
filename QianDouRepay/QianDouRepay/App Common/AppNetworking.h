@@ -100,10 +100,18 @@ typedef void(^HttpDownloadProgress) (float progress);
  * @param failureBlock    上传失败的回调
  * @param progress        上传进度
  */
+//+(void)uploadImageWithOperations:(NSDictionary *)operations
+//                  withImageArray:(NSArray *)imageArray
+//                 withTargetWidth:(CGFloat)width
+//                   withUrlString:(NSString *)urlString
+//                withSuccessBlock:(HttpRequstSuccess)successBlock
+//                withFailureBlock:(HttpRequsetFailure)failureBlock
+//              withUploadProgress:(HttpUploadProgress)progress;
+
 +(void)uploadImageWithOperations:(NSDictionary *)operations
                   withImageArray:(NSArray *)imageArray
-                 withTargetWidth:(CGFloat)width
                    withUrlString:(NSString *)urlString
+               withFileParameter:(NSString *)parameter
                 withSuccessBlock:(HttpRequstSuccess)successBlock
                 withFailureBlock:(HttpRequsetFailure)failureBlock
               withUploadProgress:(HttpUploadProgress)progress;

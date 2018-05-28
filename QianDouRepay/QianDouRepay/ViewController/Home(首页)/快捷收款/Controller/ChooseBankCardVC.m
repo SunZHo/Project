@@ -8,165 +8,181 @@
 
 #import "ChooseBankCardVC.h"
 #import "ChooseCreditCardVC.h"
+// view
+#import "BankCardCell.h"
 
-@interface ChooseBankCardVC ()<UITableViewDelegate,UITableViewDataSource,STPickerSingleDelegate>
+// model
+#import "BankCardModel.h"
+#import "AddReceiptBankCardVC.h"
+
+
+@interface ChooseBankCardVC ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic , strong) BaseTableView *table;
 
-@property (nonatomic , strong) NSMutableArray *formData;
-
-@property (nonatomic , strong) UIView *tableFootView;
-
-@property (nonatomic , assign) NSInteger indexPathRow ;
+@property (nonatomic , strong) NSMutableArray *listData;
 
 @end
 
 @implementation ChooseBankCardVC
 
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    [self loadData];
+    
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"选择银行卡";
-    
-    [self loadFormData];
-    
+    self.title = @"选择储蓄卡";
+    NSLog(@"收款钱数==%@ ",self.receiptMoney);
     [self makeUI];
     
-    
+    [self setNavRightBarItem];
 }
 
 - (void)makeUI{
     [self.view addSubview:self.table];
     
-    
 }
 
-- (void)loadFormData{
-    NSArray *titleArray = @[@"真实姓名",@"身份证号",@"储蓄卡号",
-                            @"开户行",
-                            @"手机号"];
-    
-    NSArray *placeHoldArray = @[@"请输入真实姓名",@"请输入身份证号",@"请输入储蓄卡卡号",
-                                @"请选择开户行",
-                                @"请输入银行预留手机号码"];
-    
-    NSArray *keyArray = @[@"1",@"2",@"3",@"4",@"5"];
-    
-    for (int i = 0; i < titleArray.count; i ++) {
-        FormCellModel *model = [[FormCellModel alloc]init];
-        model.title = titleArray[i];
-        model.placeHolder = placeHoldArray[i];
-        model.reqKey = keyArray[i];
-        model.boardType = UIKeyboardTypeDefault;
-        model.cellType = cellTypeTitle_FieldType;
-        model.canEdit = YES;
-        model.text = @"";
-        if (i == 3) {
-            model.cellType = cellTypeTitle_FieldSelection;
-            model.canEdit = NO;
-            model.text = @"";
-        }else if (i == 2 || i == 4){
-            model.boardType = UIKeyboardTypeNumberPad;
+
+- (void)setNavRightBarItem{
+    UIButton *plusBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [plusBtn addTarget:self action:@selector(plusClick) forControlEvents:UIControlEventTouchUpInside];
+    [plusBtn setImage:[UIImage imageNamed:@"tj"] forState:UIControlStateNormal];
+    [plusBtn sizeToFit];
+    UIBarButtonItem *plusItem = [[UIBarButtonItem alloc] initWithCustomView:plusBtn];
+    self.navigationItem.rightBarButtonItems  = @[plusItem];
+}
+
+#pragma mark - 添加储蓄卡
+- (void)plusClick{
+    AddReceiptBankCardVC *addCreditVc = [[AddReceiptBankCardVC alloc]init];
+    PUSHVC(addCreditVc);
+}
+
+- (void)loadData{
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{@"userid":UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:receipt_bankCardList withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *bankDic in arr) {
+            BankCardModel *model = [BankCardModel mj_objectWithKeyValues:bankDic];
+            model.name = [UserInfoDic objectForKey:@"realname"];
+            model.isUnbind = YES;
+            [self.listData addObject:model];
         }
-        
-        [self.formData addObject:model];
-    }
+        [self.table reloadData];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table reloadData];
+    }];
 }
 
 
 
 #pragma mark - table
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.formData.count;
+    if (self.listData.count > 0) {
+        return self.listData.count;
+    }else{
+        return 1;
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 50;
+    if (self.listData.count > 0) {
+        return 210;
+    }else{
+        return 180;
+    }
 }
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    FormCellModel *model = [self.formData objectAtIndex:indexPath.row];
-    static NSString *identifier1 = @"formCelladdCreditCard";
-    FormCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier1];
-    if (!cell) {
-        cell = [[FormCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier1];
+    if (self.listData.count > 0) {
+        static NSString *identifier = @"BankCardCell";
+        BankCardModel *model = [self.listData objectAtIndex:indexPath.row];
+        BankCardCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell = [[BankCardCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        }
+        [cell setBankModel:model];
+        cell.unBindBlock = ^{
+            NSDictionary *dic = @{@"debitid":model.ID,
+                                  @"userid":UserID
+                                  };
+            [self showLoading];
+            [AppNetworking requestWithType:HttpRequestTypePost withUrlString:receipt_unBindCard withParaments:dic withSuccessBlock:^(id json) {
+                [self showSuccessText:@"解绑成功"];
+                [self loadData];
+            } withFailureBlock:^(NSString *errorMessage, int code) {
+                
+            }];
+        };
+        
+        return cell;
+        
+    }else{
+        static NSString *identifiyImg = @"NoreplyCell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifiyImg];
+        if (!cell) {
+            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifiyImg];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.separatorInset = UIEdgeInsetsMake(0, SCREEN_WIDTH, 0, 0);
+        }
+        UIImageView *img = [[UIImageView alloc]init];
+        img.image = [UIImage imageNamed:@"zwsj"];
+        [cell.contentView addSubview:img];
+        img.sd_layout.topSpaceToView(cell.contentView, 35).widthIs(103).heightIs(103).centerXEqualToView(cell.contentView);
+        
+        UILabel *textLabel = [[UILabel alloc]init];
+        textLabel.font = kFont(15);
+        textLabel.textColor = defaultTextColor;
+        textLabel.textAlignment = NSTextAlignmentCenter;
+        textLabel.text = @"暂无数据";
+        [cell.contentView addSubview:textLabel];
+        textLabel.sd_layout.topSpaceToView(img, 15).widthIs(100).heightIs(16).centerXEqualToView(cell.contentView);
+        
+        return cell;
     }
-    cell.cellTextFieldBlock = ^(NSString *text) {
-        [self notiTextField:text andIndex:indexPath];
-    };
-    
-    [cell setFormcellModel:model];
-    return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"didse");
-    
-    _indexPathRow = indexPath.row;
-    if (indexPath.row == 3) { // 选择银行
-        STPickerSingle *single = [[STPickerSingle alloc]init];
-        [single setArrayData:[NSMutableArray arrayWithArray:@[@"中国银行",@"工商银行",@"农业银行",@"建设银行",@"民生银行"]]];
-        [single setTitle:@""];
-        [single setTitleUnit:@""];
-        single.widthPickerComponent = 100;
-        [single setDelegate:self];
-        [single show];
+    if (self.listData.count > 0) {
+        BankCardModel *model = [self.listData objectAtIndex:indexPath.row];
+        ChooseCreditCardVC *creditVc = [[ChooseCreditCardVC alloc]init];
+        creditVc.receiptBankCardID = model.ID;
+        creditVc.receiptMoney = self.receiptMoney;
+        PUSHVC(creditVc);
     }
     
-}
-
-#pragma mark - STPickerSingle 代理
-- (void)pickerSingle:(STPickerSingle *)pickerSingle selectedTitle:(NSString *)selectedTitle{
-    FormCellModel *model = [self.formData objectAtIndex:_indexPathRow];
-    model.text = selectedTitle;
-    [self.table reloadData];
-}
-
-- (void)notiTextField:(NSString *)text andIndex:(NSIndexPath *)indexPath{
-    FormCellModel *model = [self.formData objectAtIndex:indexPath.row];
-    model.text = text;
+    
 }
 
 
-#pragma mark - 确定
-- (void)sureCommit{
-    ChooseCreditCardVC *creditVc = [[ChooseCreditCardVC alloc]init];
-    PUSHVC(creditVc);
-}
 
 #pragma mark - LazyLoad
 
 - (BaseTableView *)table{
     if (!_table) {
-        _table = [[BaseTableView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        _table = [[BaseTableView alloc]initWithFrame:CGRectMake(0, 64 + SafeAreaTopHeight, SCREEN_WIDTH, SCREEN_HEIGHT - (64 + SafeAreaTopHeight))];
         _table.dataSource = self;
         _table.delegate = self;
-        _table.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-        _table.tableFooterView = self.tableFootView;
+        _table.backgroundColor = WhiteColor;
     }
     return _table;
 }
 
--(NSMutableArray *)formData{
-    if (!_formData) {
-        _formData = [[NSMutableArray alloc]init];
+-(NSMutableArray *)listData{
+    if (!_listData) {
+        _listData = [[NSMutableArray alloc]init];
     }
-    return _formData;
+    return _listData;
 }
 
 
-- (UIView *)tableFootView{
-    if (!_tableFootView) {
-        _tableFootView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-        _tableFootView.backgroundColor = Default_BackgroundGray;
-        UIButton *sure = [AppUIKit createBtnWithType:UIButtonTypeCustom backgroundColor:APPMainColor action:@selector(sureCommit) target:self title:@"确定" image:nil font:15 textColor:HEXACOLOR(0x1e2674)];
-        sure.layer.cornerRadius = 5;
-        
-        [_tableFootView addSubview:sure];
-        
-        sure.sd_layout.leftSpaceToView(_tableFootView, 12).rightSpaceToView(_tableFootView, 12).heightIs(44).centerYEqualToView(_tableFootView);
-        
-    }
-    return _tableFootView;
-}
 
 @end

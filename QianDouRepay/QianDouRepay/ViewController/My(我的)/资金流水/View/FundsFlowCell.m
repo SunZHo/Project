@@ -45,8 +45,20 @@
 
 - (void)setFundsModel:(FundsFlowModel *)fundsModel{
     self.moneyLabel.text = fundsModel.money;
-    self.timeLabel.text = fundsModel.time;
-    self.typeLabel.text = fundsModel.type;
+    self.timeLabel.text = [NSDate timeStringFromTimestamp:[fundsModel.time integerValue] formatter:@"yyyy-MM-dd HH:mm"];
+    // 推广奖励-1  分润流水-2  提现审核中-3  提现成功-4  提现失败-5
+    if ([fundsModel.type integerValue] == 1) {
+        self.typeLabel.text = @"推广奖励";
+    }else if ([fundsModel.type integerValue] == 2){
+        self.typeLabel.text = @"分润流水";
+    }else if ([fundsModel.type integerValue] == 3){
+        self.typeLabel.text = @"提现审核中";
+    }else if ([fundsModel.type integerValue] == 4){
+        self.typeLabel.text = @"提现成功";
+    }else if ([fundsModel.type integerValue] == 5){
+        self.typeLabel.text = @"提现失败";
+    }
+    
 }
 
 

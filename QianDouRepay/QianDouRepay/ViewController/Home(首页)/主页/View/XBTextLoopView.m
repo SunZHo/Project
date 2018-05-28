@@ -85,7 +85,7 @@
     _dataSource = dataSource;
     [self.tableView reloadData];
     if (dataSource.count > 1) {
-        self.interval = 2;
+        self.interval = 5;
     }else{
         [_myTimer invalidate];
         _myTimer = nil;
@@ -109,7 +109,7 @@
 
 - (void)timer {
     self.currentRowIndex++;
-    NSLog(@"%ld", _currentRowIndex);
+//    NSLog(@"%ld", _currentRowIndex);
     [self.tableView setContentOffset:CGPointMake(0, _currentRowIndex * _tableView.rowHeight) animated:YES];
 }
 

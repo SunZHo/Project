@@ -22,6 +22,9 @@
 
 @property (nonatomic , strong) UIView *tableheadView;
 
+@property (nonatomic , assign) NSInteger page ;
+@property (nonatomic , assign) NSInteger totalpage ;
+
 @end
 
 @implementation InviteRecordViewController
@@ -29,22 +32,57 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"邀请记录";
-    
-    for (int i = 0; i < 20; i++) {
-        InviteRecordModel *model = [[InviteRecordModel alloc]init];
-        model.time = @"2017-12-25 20:52";
-        model.phone = @"154****1234";
-        model.state = @"已实名";
-        [self.listData addObject:model];
-    }
-    
     [self.view addSubview:self.table];
+    [self loadData];
 }
 
 
+- (void)loadData{
+    [self.listData removeAllObjects];
+    self.page = 1;
+    NSDictionary *dic = @{@"userid":UserID,
+                          @"page":[NSString stringWithFormat:@"%ld",self.page]
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:shareRecordUrl withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.totalpage = [[infoDic objectForKey:@"all_page"] integerValue];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *infodic in arr) {
+            InviteRecordModel *model = [InviteRecordModel mj_objectWithKeyValues:infodic];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+}
 
 
-
+- (void)loadMoreData{
+    self.page ++;
+    if (self.page >= self.totalpage) {
+        [self.table.mj_footer endRefreshingWithNoMoreData];
+        return;
+    }
+    NSDictionary *dic = @{@"userid":UserID,
+                          @"page":[NSString stringWithFormat:@"%ld",self.page]
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:shareRecordUrl withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *infodic in arr) {
+            InviteRecordModel *model = [InviteRecordModel mj_objectWithKeyValues:infodic];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+    
+}
 
 
 
@@ -131,6 +169,14 @@
         _table.delegate = self;
         _table.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         _table.backgroundColor = WhiteColor;
+        __weak typeof(&*self)weakSelf = self;
+        _table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [weakSelf loadData];
+        }];
+        
+        _table.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [weakSelf loadMoreData];
+        }];
     }
     return _table;
 }

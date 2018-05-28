@@ -41,18 +41,21 @@
     [self wr_setNavBarTitleColor:WhiteColor];
 
     
-    for (int i = 0; i < 5; i++) {
-        QuickCollectionModel *model = [[QuickCollectionModel alloc]init];
-        model.pathName = @"交通银行";
-        model.rate = @"费率：0.530%+2.00元/笔";
-        model.time = @"交易时间：08:00-22:00";
-        model.limitMoney = @"额度：单笔限制最低消费500元";
-        model.type = @"结算：立即到账";
-        CGFloat money = [self.tradeMoneyTF.text floatValue] * (0.0053 + 2);
-        model.money = [NSString stringWithFormat:@"%.2f",money];
-        
-        [self.listData addObject:model];
-    }
+//    for (int i = 0; i < 1; i++) {
+//        QuickCollectionModel *model = [[QuickCollectionModel alloc]init];
+//        model.pathName = @"交通银行";
+//        model.pay_huipoint = @"0.053";
+//        model.time = @"08:00-22:00";
+//        model.paygu_huipoint = @"1";
+//        model.jiesuan = @"立即到账";
+//        model.desc = @"单笔限制最低消费500元";
+//        CGFloat moneyinput = [self.tradeMoneyTF.text floatValue];
+//        CGFloat money = moneyinput - moneyinput * [model.pay_huipoint floatValue]/100 - [model.paygu_huipoint floatValue];
+//        model.money = [NSString stringWithFormat:@"%.2f",money > 0 ? money : 0];
+//        [self.listData addObject:model];
+//    }
+    
+    
     _backview = [[UIView alloc]init];
     _backview.backgroundColor = HEXACOLOR(0x36b4fc);
     [self.view addSubview:_backview];
@@ -65,6 +68,8 @@
     [self setNavRightBarItem];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFildDidChanged) name:UITextFieldTextDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadData) name:ReceiptCompeleteNotiName object:nil];
+    [self loadData];
 }
 
 
@@ -86,11 +91,45 @@
     PUSHVC(collectVC);
 }
 
+
+- (void)loadData{
+    self.tradeMoneyTF.text = @"";
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{@"userid":UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:receipt_PathList withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        int i = 1;
+        for (NSDictionary *dic in arr) {
+            QuickCollectionModel *model = [QuickCollectionModel mj_objectWithKeyValues:dic];
+            // 金额-（金额*费率）-单笔固定手续费
+            // 1000-（1000*0.58/100）-1
+            CGFloat moneyinput = [self.tradeMoneyTF.text floatValue];
+            CGFloat money = moneyinput - moneyinput * [model.pay_huipoint floatValue]/100 - [model.paygu_huipoint floatValue];
+            model.money = [NSString stringWithFormat:@"%.2f",money > 0 ? money : 0];
+            model.inputMoney = @"0.00";
+            model.pathName = [NSString stringWithFormat:@"通道%d",i];
+            [self.listData addObject:model];
+            i++;
+        }
+        [self.table reloadData];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+}
+
+
+
+
 #pragma mark - textfieldChange_Noti
 - (void)textFildDidChanged{
+    // 金额-（金额*费率）-单笔固定手续费
+    // 1000-（1000*0.58/100）-1
     for (QuickCollectionModel *model in self.listData) {
-        CGFloat money = [self.tradeMoneyTF.text floatValue] * (0.0053 + 2);
-        model.money = [NSString stringWithFormat:@"%.2f",money];
+        CGFloat moneyinput = [self.tradeMoneyTF.text floatValue];
+        CGFloat money = moneyinput - moneyinput * [model.pay_huipoint floatValue]/100 - [model.paygu_huipoint floatValue];
+        model.money = [NSString stringWithFormat:@"%.2f",money > 0 ? money : 0];
+        model.inputMoney = [NSString stringWithFormat:@"%.2f",moneyinput > 0 ? moneyinput : 0];
     }
     [self.table reloadData];
 }

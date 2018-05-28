@@ -58,8 +58,8 @@
 
 
 - (void)setPlanModel:(RepayPlanListModel *)planModel{
-    NSString *planMoney = [NSString stringWithFormat:@"￥%@",planModel.plan];
-    NSString *totalMoney = [NSString stringWithFormat:@"￥%@",planModel.total];
+    NSString *planMoney = [NSString stringWithFormat:@"￥%@",planModel.money];
+    NSString *totalMoney = [NSString stringWithFormat:@"￥%@",planModel.repayment_money];
     
     self.timeLabel.text = planModel.time;
     self.planMoneyLabel.text = [NSString stringWithFormat:@"计划总额：%@",planMoney];
@@ -68,11 +68,11 @@
     self.totalMoneyLabel.text = [NSString stringWithFormat:@"还款总额：%@",totalMoney];
     self.totalMoneyLabel.attributedText = [AppCommon getRange:NSMakeRange(@"还款总额：".length, totalMoney.length) labelStr:[NSString stringWithFormat:@"还款总额：%@",totalMoney] Font:kFont(12) Color:HEXACOLOR(0xf68029)];
     
-    self.firstMoneyLabel.text = [NSString stringWithFormat:@"初次消费：￥%@",planModel.first];
+    self.firstMoneyLabel.text = [NSString stringWithFormat:@"初次消费：￥%@",planModel.first_money];
     
-    self.secondMoneyLabel.text = [NSString stringWithFormat:@"二次消费：￥%@",planModel.second];
+    self.secondMoneyLabel.text = [NSString stringWithFormat:@"二次消费：￥%@",planModel.second_money];
     
-    self.feeLabel.text = [NSString stringWithFormat:@"手续费用：￥%@",planModel.fee];
+    self.feeLabel.text = [NSString stringWithFormat:@"手续费用：￥%@",planModel.fee_money];
     
     
 }

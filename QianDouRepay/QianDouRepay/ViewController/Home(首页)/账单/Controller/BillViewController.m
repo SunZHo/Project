@@ -25,6 +25,10 @@
 
 @property (nonatomic , strong) UIView *rightBarCustomView;
 
+@property (nonatomic , copy) NSString *type; // 账单类型
+@property (nonatomic , assign) NSInteger page ;
+@property (nonatomic , assign) NSInteger totalpage ;
+
 @end
 
 @implementation BillViewController
@@ -33,28 +37,91 @@
     [super viewDidLoad];
     
     self.title = @"账单";
+    self.type = @"";
     self.view.backgroundColor = WhiteColor;
     [self setNavRightBarItem];
-    for (int i = 0; i < 10; i++) {
-        BillModel *model = [[BillModel alloc]init];
-        model.time = @"2018-03-29 14:32 (尾号1234)";
-        if (i % 2 == 1) {
-            model.money = @"消费￥500.00";
-            model.type = @"已成功";
-            model.status = @"1";
-        }else{
-            model.money = @"还款￥500.00";
-            model.type = @"未完成";
-            model.status = @"0";
-        }
-        [self.listData addObject:model];
-    }
+//    for (int i = 0; i < 10; i++) {
+//        BillModel *model = [[BillModel alloc]init];
+//        model.time = @"2018-03-29 14:32 (尾号1234)";
+//        if (i % 2 == 1) {
+//            model.money = @"消费￥500.00";
+//            model.type = @"已成功";
+//            model.status = @"1";
+//        }else{
+//            model.money = @"还款￥500.00";
+//            model.type = @"未完成";
+//            model.status = @"0";
+//        }
+//        [self.listData addObject:model];
+//    }
     
     [self.view addSubview:self.table];
     
+    [self loadData];
 }
 
+- (void)loadData{
+    self.page = 1;
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{@"userid":UserID,
+                          @"type":self.type,
+                          @"page":[NSString stringWithFormat:@"%ld",self.page]
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:creditcard_OrderList withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.totalpage = [[infoDic objectForKey:@"all_page"] integerValue];
+        NSArray *listA = [infoDic objectForKey:@"list"];
+        for (NSDictionary *listD in listA) {
+            NSMutableArray *subA = [NSMutableArray array];
+            BillModel *model = [BillModel mj_objectWithKeyValues:listD];
+            for (NSDictionary *subDic in [listD objectForKey:@"order"]) {
+                BillSubModel *subModel = [BillSubModel mj_objectWithKeyValues:subDic];
+                [subA addObject:subModel];
+            }
+            model.orderA = subA;
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table reloadData];
+        [self.table endRefresh];
+    }];
+    
+}
 
+- (void)loadMoreData{
+    self.page ++;
+    if (self.page >= self.totalpage) {
+        [self.table.mj_footer endRefreshingWithNoMoreData];
+        return;
+    }
+    
+    NSDictionary *dic = @{@"userid":UserID,
+                          @"type":self.type,
+                          @"page":[NSString stringWithFormat:@"%ld",self.page]
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:creditcard_OrderList withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSArray *listA = [infoDic objectForKey:@"list"];
+        for (NSDictionary *listD in listA) {
+            NSMutableArray *subA = [NSMutableArray array];
+            BillModel *model = [BillModel mj_objectWithKeyValues:listD];
+            for (NSDictionary *subDic in [listD objectForKey:@"order"]) {
+                BillSubModel *subModel = [BillSubModel mj_objectWithKeyValues:subDic];
+                [subA addObject:subModel];
+            }
+            model.orderA = subA;
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+    
+}
 
 - (void)setNavRightBarItem{
     UIBarButtonItem *billItem = [[UIBarButtonItem alloc] initWithCustomView:self.rightBarCustomView];
@@ -74,22 +141,32 @@
     [[s option_setupPopOption:^(NSInteger index, NSString *content) {
         [optionButton setTitle:content forState:UIControlStateNormal];
         if (index == 0) {
-            
+            self.type = @"";// 全部
         }else if(index == 1){
-            
+            self.type = @"2";// 还款
         }else{
-            
+            self.type = @"1";// 消费
         }
-        
+        [self loadData];
         
     } whichFrame:frame animate:YES] option_show];
 }
 
 
+
 #pragma mark - table
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     if (self.listData.count > 0) {
         return self.listData.count;
+    }else{
+        return 1;
+    }
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    if (self.listData.count > 0) {
+        BillModel *model = [self.listData objectAtIndex:section];
+        return model.orderA.count;
     }else{
         return 1;
     }
@@ -108,12 +185,13 @@
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (self.listData.count > 0) {
         static NSString *identifier = @"BillCell";
-        BillModel *model = [self.listData objectAtIndex:indexPath.row];
+        BillModel *model = [self.listData objectAtIndex:indexPath.section];
+        BillSubModel *subModel = [model.orderA objectAtIndex:indexPath.row];
         BillCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
             cell = [[BillCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         }
-        [cell setBillmodel:model];
+        [cell setBillmodel:subModel];
         
         return cell;
     }else{
@@ -144,17 +222,42 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (self.listData.count > 0) {
-        BillModel *model = [self.listData objectAtIndex:indexPath.row];
+        BillModel *model = [self.listData objectAtIndex:indexPath.section];
+        BillSubModel *subModel = [model.orderA objectAtIndex:indexPath.row];
         BillDetailViewController *detailVC = [[BillDetailViewController alloc]init];
-        detailVC.status = model.status;
+        detailVC.status = subModel.status;
+        detailVC.orderid = subModel.ID;
         PUSHVC(detailVC);
     }
     
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    if (self.listData.count > 0) {
+        BillModel *model = [self.listData objectAtIndex:section];
+        NSString *title = [NSString stringWithFormat:@"   %@",model.month];
+        UILabel *label = [AppUIKit labelWithTitle:title titleFontSize:14 textColor:HEXACOLOR(0x666666) backgroundColor:Default_BackgroundGray alignment:0];
+        label.frame = CGRectMake(0, 0, SCREEN_WIDTH, 40);
+        return label;
+    }else{
+        return nil;
+    }
+}
 
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    return nil;
+}
 
-
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    if (self.listData.count > 0) {
+        return 40;
+    }else{
+        return 0.00001;
+    }
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 0.00001;
+}
 
 
 
@@ -167,6 +270,14 @@
         _table.delegate = self;
         _table.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         _table.backgroundColor = WhiteColor;
+        __weak typeof(&*self)weakSelf = self;
+        _table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [weakSelf loadData];
+        }];
+        
+        _table.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [weakSelf loadMoreData];
+        }];
     }
     return _table;
 }

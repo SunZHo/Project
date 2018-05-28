@@ -10,4 +10,6 @@
 
 @interface BaseTableView : UITableView
 
+- (void)endRefresh;
+
 @end

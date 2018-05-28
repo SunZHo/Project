@@ -10,4 +10,7 @@
 
 @interface FundsFlowDetailVC : BaseViewController
 
+/** 流水id */
+@property (nonatomic , copy) NSString *flowID;
+
 @end

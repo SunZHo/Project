@@ -19,6 +19,7 @@
 @property (nonatomic , copy) NSArray *valueArr;
 
 @property (nonatomic , strong) UIView *tableHeadView;
+@property (nonatomic , copy) NSString *money;
 
 @end
 
@@ -32,11 +33,40 @@
     
     self.titleArr = @[@"交易类型",@"交易时间",@"订单号",@"卡号",@"流水号",@"手续费",@"处理说明"];
     
-    self.valueArr = @[@"还款",@"2018-02-03 14:32",@"62145789321001",@"6240 **** **** **** 123",@"201802031432234500",@"￥0.00",@"已成功"];
     
     [self.view addSubview:self.table];
+    
+    [self loadData];
 }
 
+- (void)loadData{
+    NSDictionary *dic = @{@"id":self.orderid};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:creditcard_OrderDetail withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.money = [infoDic objectForKey:@"money"];
+        // 类型
+        NSString *order_type = [[infoDic objectForKey:@"order_type"] integerValue] == 1 ? @"消费" : @"还款";
+        // 交易时间
+        NSString *add_time = [NSDate timeStringFromTimestamp:[[infoDic objectForKey:@"add_time"] integerValue] formatter:@"yyyy-MM-dd HH:mm"];
+        // 订单号
+        NSString *order_no = [infoDic objectForKey:@"order_no"];
+        // 卡号
+        NSString *bank_num = [AppCommon getNewBankNumWitOldBankNum:[infoDic objectForKey:@"bank_num"]];
+        // 流水号
+        NSString *loanno = [infoDic objectForKey:@"loanno"];
+        // 手续费
+        NSString *fee_money = [NSString stringWithFormat:@"￥%@",[infoDic objectForKey:@"fee_money"]];
+        // 处理说明
+        NSString *deal_info = [infoDic objectForKey:@"deal_info"];
+        self.valueArr = @[order_type,add_time,order_no,bank_num,loanno,fee_money,deal_info];
+        
+        self.table.tableHeaderView = self.tableHeadView;
+        [self.table reloadData];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
+}
 
 
 
@@ -98,7 +128,7 @@
         _table = [[BaseTableView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
         _table.dataSource = self;
         _table.delegate = self;
-        _table.tableHeaderView = self.tableHeadView;
+        
     }
     return _table;
 }
@@ -117,7 +147,7 @@
         UIImageView *img = [[UIImageView alloc]init];
         [_tableHeadView addSubview:img];
         
-        NSString *money = @"500.00";
+        NSString *money = self.money;
         NSString *moneyStr = [NSString stringWithFormat:@"￥%@",money];
         UILabel *moneyL = [AppUIKit labelWithTitle:moneyStr titleFontSize:15 textColor:defaultTextColor backgroundColor:nil alignment:NSTextAlignmentCenter];
         

@@ -27,8 +27,50 @@
     [super viewDidLoad];
     self.title = @"计划详情";
     NSArray *titleA = @[@"初次消费",@"二次消费",@"还款"];
-    NSArray *subTitlearr = @[@"金额",@"单号",@"流水号",@"手续费",@"时间",@"说明"];
-    NSArray *subValuearr = @[@"1230.00",@"1232312321312312",@"121312321222",@"￥1.86",@"2018-02-10",@"待处理"];
+    NSArray *subTitlearr ;
+    NSArray *subValuearr ;
+    NSArray *firstA;
+    NSArray *secondA;
+    NSArray *repayA;
+    
+    if (self.isFinish) {
+        subTitlearr = @[@"金额",@"单号",@"流水号",@"手续费",@"时间",@"说明"];
+//        subValuearr = @[@"1230.00",@"1232312321312312",@"121312321222",@"￥1.86",@"2018-02-10",@"待处理"];
+        firstA = @[self.repayPlanModel.first_money,
+                   self.repayPlanModel.first_order_no,
+                   self.repayPlanModel.first_loanno,
+                   [NSString stringWithFormat:@"￥%@",self.repayPlanModel.first_fee_money],
+                   [NSDate timeStringFromTimestamp:[self.repayPlanModel.first_time integerValue] formatter:@"yyyy-MM-dd"],
+                   self.repayPlanModel.first_deal_info];
+        secondA = @[self.repayPlanModel.second_money,
+                    self.repayPlanModel.second_order_no,
+                    self.repayPlanModel.second_loanno,
+                    [NSString stringWithFormat:@"￥%@",self.repayPlanModel.second_fee_money],
+                    [NSDate timeStringFromTimestamp:[self.repayPlanModel.second_time integerValue] formatter:@"yyyy-MM-dd"],
+                    self.repayPlanModel.second_deal_info];
+        repayA = @[self.repayPlanModel.repayment_money,
+                   self.repayPlanModel.repayment_order_no,
+                   self.repayPlanModel.repayment_loanno,
+                   [NSString stringWithFormat:@"￥%@",self.repayPlanModel.repayment_fee_money],
+                   [NSDate timeStringFromTimestamp:[self.repayPlanModel.repayment_time integerValue] formatter:@"yyyy-MM-dd"],
+                   self.repayPlanModel.repayment_deal_info];
+        
+        
+    }else{
+        subTitlearr = @[@"金额",@"手续费",@"时间"];
+        firstA = @[self.repayPlanModel.first_money,
+                   [NSString stringWithFormat:@"￥%@",self.repayPlanModel.first_fee_money],
+                   [NSDate timeStringFromTimestamp:[self.repayPlanModel.first_time integerValue] formatter:@"yyyy-MM-dd"]];
+        secondA = @[self.repayPlanModel.second_money,
+                    [NSString stringWithFormat:@"￥%@",self.repayPlanModel.second_fee_money],
+                    [NSDate timeStringFromTimestamp:[self.repayPlanModel.second_time integerValue] formatter:@"yyyy-MM-dd"]];
+        repayA = @[self.repayPlanModel.repayment_money,
+                   [NSString stringWithFormat:@"￥%@",self.repayPlanModel.repayment_fee_money],
+                   [NSDate timeStringFromTimestamp:[self.repayPlanModel.repayment_time integerValue] formatter:@"yyyy-MM-dd"]];
+        
+    }
+    subValuearr = @[firstA,secondA,repayA];
+    
     for (int i = 0; i < titleA.count; i++) {
         RepayPlanDetailModel *model = [[RepayPlanDetailModel alloc]init];
         model.title = titleA[i];
@@ -37,7 +79,7 @@
             RepayPlanDetailSubModel *subModel = [[RepayPlanDetailSubModel alloc]init];
             NSString *str = [NSString stringWithFormat:@"%@%@",titleA[i],subTitlearr[j]];
             subModel.subTitle = str;
-            subModel.subValue = subValuearr[j];
+            subModel.subValue = subValuearr[i][j];
             [mutableA addObject:subModel];
         }
         model.subArray = mutableA;
@@ -49,6 +91,26 @@
     
     
 }
+
+
+//- (void)loadData{
+//    NSString *str = @"";
+//    if (self.isFinish) {
+//        str = creditcard_RepayPlanDone;
+//    }else{
+//        str = creditcard_RepayPlan;
+//    }
+//    NSDictionary *dic = @{@"cardid":self.cardid,
+//                          @"userid":UserID
+//                          };
+//    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:str withParaments:dic withSuccessBlock:^(id json) {
+//
+//    } withFailureBlock:^(NSString *errorMessage, int code) {
+//
+//    }];
+//
+//}
+
 
 
 #pragma mark - table

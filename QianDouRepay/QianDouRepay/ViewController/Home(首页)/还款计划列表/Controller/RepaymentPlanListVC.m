@@ -27,16 +27,42 @@
     self.title = @"还款计划列表";
     self.view.backgroundColor = WhiteColor;
     [self setNavRightBarItem];
-    for (int i = 0; i < 10; i++) {
-        RepaymentPlanModel *model = [[RepaymentPlanModel alloc]init];
-        model.time = @"2018-02-14";
-        model.type = @"还款";
-        model.money = @"￥556.7";
-        [self.listData addObject:model];
-    }
+//    for (int i = 0; i < 10; i++) {
+//        RepaymentPlanModel *model = [[RepaymentPlanModel alloc]init];
+//        model.time = @"2018-02-14";
+//        model.type = @"还款";
+//        model.money = @"￥556.7";
+//        [self.listData addObject:model];
+//    }
     
     [self.view addSubview:self.table];
+    [self loadData];
+    
 }
+
+- (void)loadData{
+    NSString *str = @"";
+    if (self.isFinish) {
+        str = creditcard_RepayPlanDone;
+    }else{
+        str = creditcard_RepayPlan;
+    }
+    NSDictionary *dic = @{@"cardid":self.cardid,
+                          @"userid":UserID
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:str withParaments:dic withSuccessBlock:^(id json) {
+        NSArray *arr = [json objectForKey:@"info"];
+        for (NSDictionary *listD in arr) {
+            RepaymentPlanModel *model = [RepaymentPlanModel mj_objectWithKeyValues:listD];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+}
+
 
 
 
@@ -114,7 +140,10 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (self.listData.count > 0) {
+        RepaymentPlanModel *model = [self.listData objectAtIndex:indexPath.row];
         RepaymentPlanDetailVC *detailVc = [[RepaymentPlanDetailVC alloc]init];
+        detailVc.repayPlanModel = model;
+        detailVc.isFinish = self.isFinish;
         PUSHVC(detailVc);
     }
     
@@ -124,7 +153,28 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (buttonIndex == 1) {
         NSLog(@"确定");
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self planUnfreeze];
+        });
+        
     }
+}
+
+
+- (void)planUnfreeze{
+    NSDictionary *dic = @{@"cardid":self.cardid,
+                          @"userid":UserID
+                          };
+    [self showLoading];
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:creditcard_planUnfreeze withParaments:dic withSuccessBlock:^(id json) {
+        [self showSuccessText:@"还款计划解冻成功"];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            POPVC;
+        });
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
 }
 
 #pragma mark - LazyLoad

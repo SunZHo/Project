@@ -44,6 +44,7 @@ PODS:
   - PGDatePicker (2.0.6):
     - PGPickerView
   - PGPickerView (1.2.5)
+  - PPBadgeView (2.0.0)
   - RegexKitLite (4.0)
   - SDAutoLayout (2.2.0)
   - SDWebImage (4.0.0):
@@ -89,6 +90,7 @@ DEPENDENCIES:
   - MJRefresh (~> 3.1.12)
   - NSDictionary-NilSafe
   - PGDatePicker
+  - PPBadgeView
   - RegexKitLite (~> 4.0)
   - SDAutoLayout
   - SDWebImage (~> 4.0.0)
@@ -123,6 +125,7 @@ SPEC CHECKSUMS:
   NSDictionary-NilSafe: 3df5056bf920974cb9822ed24bfc41af44225201
   PGDatePicker: 7205233bf287dfc4b4d141c8795d9777342c2b64
   PGPickerView: 9108fb2b52ba5ec40cccddb1d480fd7ab7b1bb0b
+  PPBadgeView: 2448a69475d313641f0f53dc283e183ecefeeab8
   RegexKitLite: c0e4c12e6e7de0769f3a3ed679f0f61604170661
   SDAutoLayout: c5509e77ae75735d9a39f7bc83dba6d3f75d49d8
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
@@ -138,6 +141,6 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 919d507417f9561f7cd4e5496d3a672dcff72279
+PODFILE CHECKSUM: 056004fbc29c985c60dd067e0a3c3dc2f7d18ccc
 
 COCOAPODS: 1.4.0

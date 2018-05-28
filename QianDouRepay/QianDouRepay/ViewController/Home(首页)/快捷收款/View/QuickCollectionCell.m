@@ -8,6 +8,7 @@
 
 #import "QuickCollectionCell.h"
 #import "ChooseBankCardVC.h"
+#import "AddReceiptBankCardVC.h"
 
 @implementation QuickCollectionCell
 
@@ -127,10 +128,10 @@
 - (void)setQuickModel:(QuickCollectionModel *)quickModel{
     _quickModel = quickModel;
     self.pathLabel.text = quickModel.pathName;
-    self.rateLabel.text = quickModel.rate;
-    self.timeLabel.text = quickModel.time;
-    self.limitLabel.text = quickModel.limitMoney;
-    self.typeLabel.text = quickModel.type;
+    self.rateLabel.text = [NSString stringWithFormat:@"费率：%@%%+%@元/笔",quickModel.pay_huipoint,quickModel.paygu_huipoint];
+    self.timeLabel.text = [NSString stringWithFormat:@"交易时间：%@",quickModel.time];
+    self.limitLabel.text = [NSString stringWithFormat:@"额度：%@",quickModel.desc];
+    self.typeLabel.text = [NSString stringWithFormat:@"结算：%@",quickModel.jiesuan];
     
     NSString *moneystr = [NSString stringWithFormat:@"￥%@",quickModel.money];
     NSString *money = [NSString stringWithFormat:@"实时到账：%@",moneystr];
@@ -144,6 +145,7 @@
 - (void)PayClick{
     UIViewController *vc = [AppCommon getViewController:self.contentView];
     ChooseBankCardVC *bankCardVc = [[ChooseBankCardVC alloc]init];
+    bankCardVc.receiptMoney = _quickModel.inputMoney;
     [vc.navigationController pushViewController:bankCardVc animated:YES];
 }
 

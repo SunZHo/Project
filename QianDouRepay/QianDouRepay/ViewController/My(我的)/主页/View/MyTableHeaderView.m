@@ -34,7 +34,7 @@
         self.headImg.sd_layout.centerXEqualToView(self).topSpaceToView(self, 85).heightIs(66).widthIs(66);
         self.headImg.sd_cornerRadiusFromWidthRatio = @(0.5);
         
-        self.nameLabel.sd_layout.topSpaceToView(self.headImg, 12).leftEqualToView(self).rightEqualToView(self).heightIs(15);
+        self.nameLabel.sd_layout.topSpaceToView(self.headImg, 10).leftEqualToView(self).rightEqualToView(self).heightIs(17);
         
         self.VIPLabel.sd_layout.topSpaceToView(self.nameLabel, 11).leftEqualToView(self).rightEqualToView(self).heightIs(12);
         
@@ -70,7 +70,7 @@
 #pragma mark - LazyLoad
 - (UILabel *)nameLabel{
     if (!_nameLabel) {
-        _nameLabel = [AppUIKit labelWithTitle:@"七个葫芦娃" titleFontSize:15 textColor:defaultTextColor backgroundColor:nil alignment:NSTextAlignmentCenter];
+        _nameLabel = [AppUIKit labelWithTitle:UserNickName titleFontSize:15 textColor:defaultTextColor backgroundColor:nil alignment:NSTextAlignmentCenter];
     }
     return _nameLabel;
 }
@@ -79,8 +79,7 @@
 - (UIImageView *)headImg{
     if (!_headImg) {
         _headImg = [[UIImageView alloc]init];
-        _headImg.image = IMG(@"");
-        _headImg.backgroundColor = HEXACOLOR(0xfda133);
+        _headImg.backgroundColor = WhiteColor;
         _headImg.layer.borderColor = [UIColor whiteColor].CGColor;
         _headImg.layer.borderWidth = 4;
     }

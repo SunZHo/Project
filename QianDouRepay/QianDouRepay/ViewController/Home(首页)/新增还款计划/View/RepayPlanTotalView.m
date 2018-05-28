@@ -11,6 +11,7 @@
 @interface RepayPlanTotalView ()
 
 @property (nonatomic , strong) UIView *backView;
+@property (nonatomic , strong) NSDictionary *previewDic;
 
 @end
 
@@ -18,10 +19,11 @@
 
 @implementation RepayPlanTotalView
 
--(instancetype)initWithFrame:(CGRect)frame{
+-(instancetype)initWithFrame:(CGRect)frame infoDic:(NSDictionary *)dic{
     if (self == [super initWithFrame:frame]) {
         self.frame = [UIScreen mainScreen].bounds;
         self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.3f];
+        self.previewDic = dic;
         [self layoutSubview];
         
     }
@@ -46,13 +48,20 @@
     UILabel *leftLabel4 = [AppUIKit labelWithTitle:@"信用卡建议预留额度" titleFontSize:12 textColor:HEXACOLOR(0x666666) backgroundColor:WhiteColor alignment:0];
     
     
-    UILabel *rightLabel1 = [AppUIKit labelWithTitle:@"￥2000.00" titleFontSize:12 textColor:HEXACOLOR(0x666666) backgroundColor:WhiteColor alignment:NSTextAlignmentRight];
+    UILabel *rightLabel1 = [AppUIKit labelWithTitle:[NSString stringWithFormat:@"￥%@",[self.previewDic objectForKey:@"pay_money"]]
+                                      titleFontSize:12
+                                          textColor:HEXACOLOR(0x666666)
+                                    backgroundColor:WhiteColor
+                                          alignment:NSTextAlignmentRight];
     
-    UILabel *rightLabel2 = [AppUIKit labelWithTitle:@"￥2000.00" titleFontSize:12 textColor:HEXACOLOR(0x666666) backgroundColor:WhiteColor alignment:NSTextAlignmentRight];
+    UILabel *rightLabel2 = [AppUIKit labelWithTitle:[NSString stringWithFormat:@"￥%@",[self.previewDic objectForKey:@"repayment_money"]]
+                                      titleFontSize:12 textColor:HEXACOLOR(0x666666) backgroundColor:WhiteColor alignment:NSTextAlignmentRight];
     
-    UILabel *rightLabel3 = [AppUIKit labelWithTitle:@"￥2000.00" titleFontSize:12 textColor:HEXACOLOR(0x666666) backgroundColor:WhiteColor alignment:NSTextAlignmentRight];
+    UILabel *rightLabel3 = [AppUIKit labelWithTitle:[NSString stringWithFormat:@"￥%@",[self.previewDic objectForKey:@"fee_money"]]
+                                      titleFontSize:12 textColor:HEXACOLOR(0x666666) backgroundColor:WhiteColor alignment:NSTextAlignmentRight];
     
-    UILabel *rightLabel4 = [AppUIKit labelWithTitle:@"￥2000.00" titleFontSize:12 textColor:HEXACOLOR(0xe60012) backgroundColor:WhiteColor alignment:NSTextAlignmentRight];
+    UILabel *rightLabel4 = [AppUIKit labelWithTitle:[NSString stringWithFormat:@"￥%@",[self.previewDic objectForKey:@"min_money"]]
+                                      titleFontSize:12 textColor:HEXACOLOR(0xe60012) backgroundColor:WhiteColor alignment:NSTextAlignmentRight];
     
     [self.backView sd_addSubviews:@[leftLabel1,leftLabel2,leftLabel3,leftLabel4,
                                     rightLabel1,rightLabel2,rightLabel3,rightLabel4]];
@@ -100,7 +109,10 @@
 
 
 - (void)sureClick{
-    
+    [self dismiss];
+    if (self.sureCommitBlock) {
+        self.sureCommitBlock();
+    }
 }
 
 

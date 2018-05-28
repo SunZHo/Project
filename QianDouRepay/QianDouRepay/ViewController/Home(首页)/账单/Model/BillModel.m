@@ -11,3 +11,11 @@
 @implementation BillModel
 
 @end
+
+@implementation BillSubModel
+
+@end
+
+@implementation receiptRecordModel
+
+@end

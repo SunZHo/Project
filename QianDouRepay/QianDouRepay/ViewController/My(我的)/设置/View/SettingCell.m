@@ -17,7 +17,7 @@
         self.textLabel.font = [UIFont systemFontOfSize:15];
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         [self.contentView addSubview:self.rightLabel];
-        self.rightLabel.sd_layout.centerYEqualToView(self.contentView).rightSpaceToView(self.contentView, 13).widthRatioToView(self.contentView, 0.5).heightIs(15);
+        self.rightLabel.sd_layout.centerYEqualToView(self.contentView).rightSpaceToView(self.contentView, 13).widthRatioToView(self.contentView, 0.5).heightIs(17);
     }
     return self;
 }

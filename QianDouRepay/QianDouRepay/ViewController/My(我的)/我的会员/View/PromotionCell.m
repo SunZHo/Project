@@ -53,16 +53,20 @@
 
 
 - (void)setPromotionModel:(PromotionModel *)promotionModel{
-    NSString *isrealName = ([promotionModel.isRealName integerValue] == 1 ? @"(已实名)" : @"(未实名)");
+    NSString *isrealName = ([promotionModel.is_confirm integerValue] == 1 ? @"(已实名)" : @"(未实名)");
     
-    self.nameLabel.text = [NSString stringWithFormat:@"%@%@",promotionModel.name,isrealName];
-    UIColor *realnameColor = ([promotionModel.isRealName integerValue] == 1 ? HEXACOLOR(0x5cb7ff) : HEXACOLOR(0xff5c5c));
+    self.nameLabel.text = [NSString stringWithFormat:@"%@%@",promotionModel.realname,isrealName];
+    UIColor *realnameColor = ([promotionModel.is_confirm integerValue] == 1 ? HEXACOLOR(0x5cb7ff) : HEXACOLOR(0xff5c5c));
     
-    self.nameLabel.attributedText = [AppCommon getRange:NSMakeRange(promotionModel.name.length, isrealName.length) labelStr:[NSString stringWithFormat:@"%@%@",promotionModel.name,isrealName] Font:kFont(12) Color:realnameColor];
+    self.nameLabel.attributedText = [AppCommon getRange:NSMakeRange(promotionModel.realname.length, isrealName.length) labelStr:[NSString stringWithFormat:@"%@%@",promotionModel.realname,isrealName] Font:kFont(12) Color:realnameColor];
     
-    self.vipTypeLabel.text = promotionModel.vipType;
-    self.phoneLabel.text = promotionModel.phone;
-    self.timeLabel.text = promotionModel.time;
+    self.vipTypeLabel.text = ([promotionModel.is_vip integerValue] == 1 ? @"推广员" : @"普通用户 ");
+    if (promotionModel.phone.length == 11) {
+        self.phoneLabel.text = [promotionModel.phone stringByReplacingCharactersInRange:NSMakeRange(3, 4) withString:@"****"];
+    }else{
+        self.phoneLabel.text = promotionModel.phone;
+    }
+    self.timeLabel.text = [NSDate timeStringFromTimestamp:[promotionModel.add_time integerValue]formatter:@"yyyy-MM-dd HH:mm"];
 }
 
 

@@ -16,7 +16,7 @@
 @property (nonatomic , strong) UIView *lineV_1;
 @property (nonatomic , strong) UIView *lineV_10;
 
-@property (nonatomic , strong) MyFeeRateModel *myFeeModel;
+@property (nonatomic , strong) MyFeeRateReceiveModel *myFeeModel;
 
 
 @end

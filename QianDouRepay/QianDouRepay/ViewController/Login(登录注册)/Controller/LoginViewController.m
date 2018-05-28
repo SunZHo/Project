@@ -121,6 +121,43 @@
 }
 
 - (void)sureClick{
+    if ([self.phoneTF.text isEqualToString:@""]) {
+        [self showErrorText:@"请填写手机号"];
+        return;
+    }
+    if ([self.pwdTF.text isEqualToString:@""]) {
+        [self showErrorText:@"请填写密码"];
+        return;
+    }
+    NSDictionary *dic = @{
+                          @"phone":self.phoneTF.text,
+                          @"pass" :self.pwdTF.text
+                          };
+    [self showLoading];
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:loginUrl withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSString *phone = [infoDic objectForKey:@"phone"];
+        NSString *uid = [infoDic objectForKey:@"id"];
+        NSString *nickName = [infoDic objectForKey:@"nick_name"];
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        [dic setValue:uid forKey:@"uid"];
+        [dic setValue:@"1" forKey:@"loginStatus"];
+        [dic setValue:phone forKey:@"phone"];
+        [dic setValue:nickName forKey:@"nickname"];
+        [dic setValue:@"" forKey:@"avatar"];
+        ApplicationDelegate.userInfoManager.userInfo = dic;
+        ApplicationDelegate.userInfoManager.userId = uid;
+        ApplicationDelegate.userInfoManager.loginStatus = @"1";
+        [UserInfoCache archiveUserInfo:dic keyedArchiveName:USER_INFO_CACHE];
+        [self showSuccessText:@"登录成功"];
+        [self loadUserInfoData];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+        });
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
     
 }
 
@@ -133,6 +170,57 @@
         [self.navigationController pushViewController:forgetVC animated:YES];
     }
 }
+
+
+- (void)loadUserInfoData{
+    NSDictionary *dic = @{@"userid" : UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_accountInfo withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        // 昵称
+        [UserInfoDic setObject:[infoDic objectForKey:@"nickname"] forKey:@"nickname"];
+        // 手机号
+        [UserInfoDic setObject:[infoDic objectForKey:@"phone"]  forKey:@"phone"];
+        // 账户余额
+        [UserInfoDic setObject:[infoDic objectForKey:@"account_money"] forKey:@"account_money"];
+        // 是否升级推广员 1-是，0-否
+        [UserInfoDic setObject:[infoDic objectForKey:@"is_vip"] forKey:@"is_vip"];
+        // 提现卡 1-已绑卡，0-未绑卡
+        [UserInfoDic setObject:[infoDic objectForKey:@"cash_bank"] forKey:@"cash_bank"];
+        // 还款费率
+        [UserInfoDic setObject:[infoDic objectForKey:@"pay_cost"] forKey:@"pay_cost"];
+        // 还款单笔固定手续费
+        [UserInfoDic setObject:[infoDic objectForKey:@"cash_fee"] forKey:@"cash_fee"];
+        // 收款费率
+        [UserInfoDic setObject:[infoDic objectForKey:@"get_cost"] forKey:@"get_cost"];
+        // 收款单笔固定手续费
+        [UserInfoDic setObject:[infoDic objectForKey:@"get_fee"] forKey:@"get_fee"];
+        // 系统编号：邀请码
+        [UserInfoDic setObject:[infoDic objectForKey:@"sys_code"] forKey:@"sys_code"];
+        // 实名状态：1-是，0-否
+        [UserInfoDic setObject:[infoDic objectForKey:@"is_confirm"] forKey:@"is_confirm"];
+        // 提现手续费
+        [UserInfoDic setObject:[infoDic objectForKey:@"member_cash"] forKey:@"member_cash"];
+        // 真实姓名
+        [UserInfoDic setObject:[infoDic objectForKey:@"realname"] forKey:@"realname"];
+        // 身份证号码
+        [UserInfoDic setObject:[infoDic objectForKey:@"idcard"] forKey:@"idcard"];
+        // 性别：0-保密，1-男，2-女
+        [UserInfoDic setObject:[infoDic objectForKey:@"sex"] forKey:@"sex"];
+        // 用户头像
+        [UserInfoDic setObject:[infoDic objectForKey:@"avatar"] forKey:@"avatar"];
+        // 用户类型：4：推广员 5：普通会员
+        [UserInfoDic setObject:[infoDic objectForKey:@"user_type"] forKey:@"user_type"];
+        
+        [UserInfoCache archiveUserInfo:UserInfoDic keyedArchiveName:USER_INFO_CACHE];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+}
+
+
+
+
 
 #pragma mark - LazyLoad
 - (LoginHeadView *)headView{
@@ -157,7 +245,6 @@
         _phoneTF = [[UITextField alloc]init];
         _phoneTF.textColor = HEXACOLOR(0x33435c);
         _phoneTF.font = kFont(15);
-//        _phoneTF.placeholder = @"请输入您的手机号";
         NSAttributedString *attrStr = [[NSAttributedString alloc]initWithString:@"请输入您的手机号" attributes:                                              @{NSForegroundColorAttributeName:HEXACOLOR(0x999999),                                                       NSFontAttributeName:[UIFont systemFontOfSize:11]}];
         _phoneTF.attributedPlaceholder = attrStr;
         _phoneTF.keyboardType = UIKeyboardTypeNumberPad;
@@ -173,8 +260,6 @@
         _pwdTF.font = kFont(15);
         NSAttributedString *attrStr = [[NSAttributedString alloc]initWithString:@"请输入密码" attributes:                                              @{NSForegroundColorAttributeName:HEXACOLOR(0x999999),                                                       NSFontAttributeName:[UIFont systemFontOfSize:11]}];
         _pwdTF.attributedPlaceholder = attrStr;
-//        _pwdTF.placeholder = @"请输入密码";
-        _pwdTF.keyboardType = UIKeyboardTypeNumberPad;
         _pwdTF.clearButtonMode = UITextFieldViewModeWhileEditing;
         _pwdTF.secureTextEntry = YES;
     }

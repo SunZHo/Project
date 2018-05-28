@@ -14,6 +14,7 @@
 @property (nonatomic , strong) UILabel *moneyLabel;
 @property (nonatomic , strong) UILabel *timeLabel;
 @property (nonatomic , strong) UILabel *typeLabel;
-@property (nonatomic , strong) BillModel *billmodel;
+@property (nonatomic , strong) BillSubModel *billmodel;
+@property (nonatomic , strong) receiptRecordModel *receiptModel;
 
 @end

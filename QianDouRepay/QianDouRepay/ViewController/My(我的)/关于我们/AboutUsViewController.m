@@ -25,14 +25,22 @@
     self.title = @"关于我们";
     
     self.titleArray = @[@"版本号",@"客服电话",@"官方网址"];
-    NSString *version = [NSString stringWithFormat:@"V%@",[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
-    NSString *phone = @"40-600-8000";
-    NSString *webUrl = @"www.qgdnh.com";
-    self.valueArray = @[version,phone,webUrl];
+    [self loadData];
     
     [self.view addSubview:self.table];
 }
 
+- (void)loadData{
+    [AppNetworking requestWithType:HttpRequestTypeGet withUrlString:my_aboutUS withParaments:nil withSuccessBlock:^(id json) {
+        NSString *version = [NSString stringWithFormat:@"V%@",[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+        NSString *phone = [[json objectForKey:@"info"] objectForKey:@"phone"];
+        NSString *webUrl = [[json objectForKey:@"info"] objectForKey:@"website"];
+        self.valueArray = @[version,phone,webUrl];
+        [self.table reloadData];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+}
 
 
 #pragma mark - table

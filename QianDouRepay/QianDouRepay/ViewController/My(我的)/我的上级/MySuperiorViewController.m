@@ -26,19 +26,44 @@
     self.view.backgroundColor = HEXACOLOR(0xf4ebc3);
     [self wr_setNavBarShadowImageHidden:YES];
     
-    [self makeUI];
-    
     [self loadData];
 }
 
 
 - (void)loadData{
-    self.iconImage.image = IMG(@"");
-    self.iconImage.backgroundColor = randomColor;
-    self.nameLabel.text = @"张小君";
-    self.phoneLabel.text = @"157****1234";
-    self.typeLabel.text = @"VIP 会员";
     
+    NSDictionary *dic = @{@"userid" : UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_topFriend withParaments:dic withSuccessBlock:^(id json) {
+        [self makeUI];
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        if ([[infoDic objectForKey:@"phone"]isEqualToString:@""] && [[infoDic objectForKey:@"realname"]isEqualToString:@""]) {
+//            [self showErrorText:@"没有上级"];
+            [self.iconImage sd_setImageWithURL:[NSURL URLWithString:@""] placeholderImage:IMG(@"tx")];
+            self.nameLabel.text = @"没有上级";
+            NSString *phone = [infoDic objectForKey:@"phone"];
+            if (phone.length == 11) {
+                self.phoneLabel.text = [phone stringByReplacingCharactersInRange:NSMakeRange(3, 4) withString:@"****"];
+            }else{
+                self.phoneLabel.text = @"";
+            }
+            self.typeLabel.hidden = YES;
+        }else{
+            
+            [self.iconImage sd_setImageWithURL:[NSURL URLWithString:[infoDic objectForKey:@"p_avatar"]] placeholderImage:IMG(@"tx")];
+            self.nameLabel.text = [infoDic objectForKey:@"realname"];
+            NSString *phone = [infoDic objectForKey:@"phone"];
+            if (phone.length == 11) {
+                self.phoneLabel.text = [phone stringByReplacingCharactersInRange:NSMakeRange(3, 4) withString:@"****"];
+            }else{
+                self.phoneLabel.text = @"";
+            }
+            self.typeLabel.text = [infoDic objectForKey:@"p_is_vip"];
+        }
+        
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
 }
 
 

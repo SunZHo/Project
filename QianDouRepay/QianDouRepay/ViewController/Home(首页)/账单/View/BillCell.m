@@ -45,18 +45,47 @@
 
 
 
-- (void)setBillmodel:(BillModel *)billmodel{
-    self.moneyLabel.text = billmodel.money;
-    self.timeLabel.text = billmodel.time;
-    self.typeLabel.text = billmodel.type;
+- (void)setBillmodel:(BillSubModel *)billmodel{
+    
+
+
+    NSString *typeStr;
+    if ([billmodel.type integerValue] == 1) {
+        typeStr = @"消费";
+    }else{
+        typeStr = @"还款";
+    }
+    self.moneyLabel.text = [NSString stringWithFormat:@"%@￥%@",typeStr,billmodel.money];
+    NSString *time = [NSDate timeStringFromTimestamp:[billmodel.time integerValue] formatter:@"yyyy-MM-dd HH:mm"];
+    NSString *bankNum = [NSString stringWithFormat:@"(尾号%@)",[billmodel.bank_num substringFromIndex:billmodel.bank_num.length - 4]];
+    self.timeLabel.text = [NSString stringWithFormat:@"%@%@",time,bankNum];
+    
     if ([billmodel.status integerValue] == 1) {
+        self.typeLabel.text = @"已成功";
         self.typeLabel.textColor = HEXACOLOR(0x5cb7ff);
     }else{
+        self.typeLabel.text = @"未完成";
         self.typeLabel.textColor = HEXACOLOR(0xff5c5c);
     }
     
 }
 
+
+- (void)setReceiptModel:(receiptRecordModel *)receiptModel{
+    self.moneyLabel.text = [NSString stringWithFormat:@"￥%@",receiptModel.money];
+    self.timeLabel.text = [NSDate timeStringFromTimestamp:[receiptModel.add_time integerValue] formatter:@"yyyy-MM-dd HH:mm"];
+    
+    if ([receiptModel.status integerValue] == 1) {
+        self.typeLabel.text = @"成功";
+        self.typeLabel.textColor = HEXACOLOR(0x5cb7ff);
+    }else if([receiptModel.status integerValue] == 2){
+        self.typeLabel.textColor = HEXACOLOR(0xff5c5c);
+        self.typeLabel.text = @"失败";
+    }else{
+        self.typeLabel.textColor = HEXACOLOR(0xff5c5c);
+        self.typeLabel.text = @"未支付";
+    }
+}
 
 
 

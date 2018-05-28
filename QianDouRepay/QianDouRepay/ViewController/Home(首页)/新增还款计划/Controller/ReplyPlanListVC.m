@@ -10,6 +10,7 @@
 #import "RepayPlanListModel.h"
 #import "RepayPlanListCell.h"
 #import "RepayPlanTotalView.h"
+#import "CreditCardRepayVC.h"
 
 @interface ReplyPlanListVC ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -19,30 +20,64 @@
 
 @property (nonatomic , strong) UIView *tableFootView;
 
+@property (nonatomic , strong) NSDictionary *previewDic;
+@property (nonatomic , assign) BOOL isCommitPlan ; // 是否提交计划
+
 @end
 
 @implementation ReplyPlanListVC
+
+
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    if (!self.isCommitPlan) {
+        [self clearPreview];
+    }
+}
+
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"新增还款计划";
     self.view.backgroundColor = WhiteColor;
     
-    for (int i = 0 ; i < 3; i ++) {
-        RepayPlanListModel *model = [[RepayPlanListModel alloc]init];
-        model.time = @"2018-02-10";
-        model.plan = @"562.00";
-        model.total = @"556.5";
-        model.first = @"562.00";
-        model.second = @"562.00";
-        model.fee = @"562.00";
-        [self.listData addObject:model];
-    }
+//    for (int i = 0 ; i < 3; i ++) {
+//        RepayPlanListModel *model = [[RepayPlanListModel alloc]init];
+//        model.time = @"2018-02-10";
+//        model.plan = @"562.00";
+//        model.total = @"556.5";
+//        model.first = @"562.00";
+//        model.second = @"562.00";
+//        model.fee = @"562.00";
+//        [self.listData addObject:model];
+//    }
     
     [self.view addSubview:self.table];
+    
+    [self loadData];
 }
 
-
+- (void)loadData{
+    NSDictionary *dic = @{@"cardid":self.cardid,
+                          @"userid":UserID
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:creditcard_PlanPreview withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSArray *listA = [infoDic objectForKey:@"list"];
+        self.previewDic = [infoDic objectForKey:@"info"];
+        for (NSDictionary *lisd in listA) {
+            RepayPlanListModel *model = [RepayPlanListModel mj_objectWithKeyValues:lisd];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
+    
+}
 
 
 
@@ -83,11 +118,45 @@
 #pragma mark - 确认提交
 
 - (void)sureCommit{
-    RepayPlanTotalView *view = [[RepayPlanTotalView alloc]initWithFrame:self.view.frame];
+    RepayPlanTotalView *view = [[RepayPlanTotalView alloc]initWithFrame:self.view.frame infoDic:self.previewDic];
+    view.sureCommitBlock = ^{
+        [self doCommit];
+    };
     [view show];
 }
 
+- (void)doCommit{
+    NSDictionary *dic = @{@"cardid":self.cardid,
+                          @"userid":UserID
+                          };
+    [self showLoading];
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:creditcard_PlanSubmit withParaments:dic withSuccessBlock:^(id json) {
+        self.isCommitPlan = YES;
+        [self showSuccessText:@"新增还款计划成功"];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            for (UIViewController *controller in self.navigationController.viewControllers) {
+                if ([controller isKindOfClass:[CreditCardRepayVC class]]) {
+                    CreditCardRepayVC *revise =(CreditCardRepayVC *)controller;
+                    [self.navigationController popToViewController:revise animated:YES];
+                }
+            }
+        });
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+}
 
+- (void)clearPreview{
+    NSDictionary *dic = @{@"cardid":self.cardid,
+                          @"userid":UserID
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:creditcard_PlanClear withParaments:dic withSuccessBlock:^(id json) {
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+}
 
 #pragma mark - LazyLoad
 

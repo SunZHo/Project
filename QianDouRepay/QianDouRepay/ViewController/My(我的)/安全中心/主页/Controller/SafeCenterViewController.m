@@ -9,7 +9,7 @@
 #import "SafeCenterViewController.h"
 
 // viewcontroller
-#import "CertifyNameVC.h"
+#import "UploadPicViewController.h"
 #import "ChangeOldPhoneVC.h"
 #import "ChangePassWordVC.h"
 #import "BankCardViewController.h"
@@ -32,6 +32,11 @@
 @end
 
 @implementation SafeCenterViewController
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self.table reloadData];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -64,6 +69,7 @@
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifiyImg];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
+    [cell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     UIImageView *img = [[UIImageView alloc]init];
     img.image = IMG(self.iconArray[indexPath.row]);
     [cell.contentView addSubview:img];
@@ -84,7 +90,7 @@
     
     if (indexPath.row == 0) {
         img.sd_layout.leftSpaceToView(cell.contentView, 12).widthIs(18).heightIs(15).centerYEqualToView(cell.contentView);
-        if (!self.hasCertifiedName) {
+        if ([[UserInfoDic objectForKey:@"is_confirm"] integerValue] == 0) {
             rightTextLabel.text = @"未认证";
             rightTextLabel.textColor = HEXACOLOR(0xf68029);
         }else{
@@ -94,18 +100,20 @@
         
     }else if (indexPath.row == 1){
         img.sd_layout.leftSpaceToView(cell.contentView, 16).widthIs(11).heightIs(17).centerYEqualToView(cell.contentView);
-        if (!self.hasBingPhone) {
+        NSString *phone = [UserInfoDic objectForKey:@"phone"];
+        if (phone) {
+            rightTextLabel.text = [phone stringByReplacingCharactersInRange:NSMakeRange(3, 4) withString:@"****"];
+            rightTextLabel.textColor = defaultTextColor;
+        }else{
             rightTextLabel.text = @"";
             rightTextLabel.textColor = HEXACOLOR(0xf68029);
-        }else{
-            rightTextLabel.text = @"155****2211";
-            rightTextLabel.textColor = defaultTextColor;
         }
+        
     }else if (indexPath.row == 2){
         img.sd_layout.leftSpaceToView(cell.contentView, 15).widthIs(13).heightIs(16).centerYEqualToView(cell.contentView);
     }else if (indexPath.row == 3){
         img.sd_layout.leftSpaceToView(cell.contentView, 13).widthIs(16).heightIs(13).centerYEqualToView(cell.contentView);
-        if (!self.hasBingBankCard) {
+        if ([[UserInfoDic objectForKey:@"cash_bank"] integerValue] == 0) {
             rightTextLabel.text = @"未绑定";
             rightTextLabel.textColor = HEXACOLOR(0xf68029);
         }else{
@@ -122,8 +130,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.row == 0) {
-        CertifyNameVC *certiVC = [[CertifyNameVC alloc]init];
-        PUSHVC(certiVC);
+        if ([[UserInfoDic objectForKey:@"is_confirm"] integerValue] == 0) {
+            UploadPicViewController *certiVC = [[UploadPicViewController alloc]init];
+            PUSHVC(certiVC);
+        }else{
+            [self showSuccessText:@"您已实名认证"];
+        }
     }else if (indexPath.row == 1){
         ChangeOldPhoneVC *changePhoneVC = [[ChangeOldPhoneVC alloc]init];
         PUSHVC(changePhoneVC);
@@ -131,8 +143,13 @@
         ChangePassWordVC *changePwdVC = [[ChangePassWordVC alloc]init];
         PUSHVC(changePwdVC);
     }else if (indexPath.row == 3){
-        BankCardViewController *bankCardVC = [[BankCardViewController alloc]init];
-        PUSHVC(bankCardVC);
+        if ([[UserInfoDic objectForKey:@"is_confirm"] integerValue] == 0) {
+            [self showErrorText:@"请先实名认证"];
+        }else{
+            BankCardViewController *bankCardVC = [[BankCardViewController alloc]init];
+            PUSHVC(bankCardVC);
+        }
+        
     }
 }
 

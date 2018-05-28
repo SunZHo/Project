@@ -11,6 +11,7 @@
 @interface FilterModel : BaseModel
 
 @property (nonatomic , copy) NSString *text;
+@property (nonatomic , copy) NSString *type;
 @property (nonatomic , assign) BOOL isChoose ;
 
 @end

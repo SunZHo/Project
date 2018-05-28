@@ -42,7 +42,7 @@
 
 - (void)setNoticeModel:(NoticeModel *)noticeModel{
     self.titleLabel.text = noticeModel.title;
-    self.timeLabel.text = noticeModel.time;
+    self.timeLabel.text = [NSDate timeStringFromTimestamp:[noticeModel.time integerValue]formatter:@"yyyy-MM-dd HH:mm"];
 }
 
 

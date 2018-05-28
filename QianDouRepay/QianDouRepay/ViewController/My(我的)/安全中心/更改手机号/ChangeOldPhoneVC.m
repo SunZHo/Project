@@ -18,6 +18,8 @@
 
 @property (nonatomic , strong) UIView *tableFootView;
 
+@property (nonatomic , copy) NSString *verifyCode;
+
 @end
 
 @implementation ChangeOldPhoneVC
@@ -57,6 +59,8 @@
         if(i == 1){
             model.cellType = cellTypeTitle_FieldVeirfyCodeType;
         }else{
+            model.text = [UserInfoDic objectForKey:@"phone"];
+            model.canEdit = NO;
             model.cellType = cellTypeTitle_FieldType;
         }
         
@@ -85,6 +89,9 @@
     cell.cellTextFieldBlock = ^(NSString *text) {
         [self notiTextField:text andIndex:indexPath];
     };
+    cell.getVerifyCodeBlock = ^{
+        [self getVeirfyCode];
+    };
     
     [cell setFormcellModel:model];
     return cell;
@@ -96,13 +103,33 @@
 
 
 - (void)notiTextField:(NSString *)text andIndex:(NSIndexPath *)indexPath{
+    
     FormCellModel *model = [self.formData objectAtIndex:indexPath.row];
     model.text = text;
 }
 
 
+- (void)getVeirfyCode{
+    FormCellModel *model1 = self.formData[0]; // 手机号
+    [self showLoading];
+    NSDictionary *dic = @{@"phone":model1.text};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_changePhoneOldSMS withParaments:dic withSuccessBlock:^(id json) {
+        [self dismissLoading];
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.verifyCode = [NSString stringWithFormat:@"%ld",[[infoDic objectForKey:@"code"] integerValue]];
+        [[NSNotificationCenter defaultCenter]postNotificationName:CountingDownNotiName object:nil];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+}
+
 
 - (void)nextStep{
+    FormCellModel *model1 = self.formData[1]; // 手机号
+    if (![self.verifyCode isEqualToString:model1.text]) {
+        [self showErrorText:@"验证码不正确"];
+        return;
+    }
     ChangePhoneVC *changePhoneVC = [[ChangePhoneVC alloc]init];
     PUSHVC(changePhoneVC);
 }

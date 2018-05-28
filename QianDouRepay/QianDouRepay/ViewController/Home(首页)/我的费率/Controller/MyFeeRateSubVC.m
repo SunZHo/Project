@@ -30,17 +30,47 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navlineV.alpha = 0;
-    for (int i = 0; i < 3; i++) {
-        MyFeeRateModel *model = [[MyFeeRateModel alloc]init];
-        model.pathName = @"中国银行";
-        model.D0 = @"0.85%+1元/笔";
-        model.T_1 = @"";
-        model.money = @"0.00";
-        model.topMoney = @"0.00";
-        
-        [self.listData addObject:model];
-    }
+    
     [self.view addSubview:self.table];
+    [self loadData];
+}
+
+
+
+- (void)loadData{
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{@"userid":UserID};
+    NSString *url = @"";
+    if ([self.title isEqualToString:@"收款费率"]) {
+        url = home_MyFeeReceive;
+        [AppNetworking requestWithType:HttpRequestTypePost withUrlString:url withParaments:dic withSuccessBlock:^(id json) {
+            NSDictionary *dic = [json objectForKey:@"info"];
+            NSArray *arr = [dic objectForKey:@"list"];
+            for (NSDictionary *lDic in arr) {
+                MyFeeRateReceiveModel *model = [MyFeeRateReceiveModel model];
+                [model setValuesForKeysWithDictionary:lDic];
+                [self.listData addObject:model];
+            }
+            [self.table reloadData];
+        } withFailureBlock:^(NSString *errorMessage, int code) {
+            
+        }];
+        
+    }else{
+        url = home_MyFeeRepay;
+        [AppNetworking requestWithType:HttpRequestTypePost withUrlString:url withParaments:dic withSuccessBlock:^(id json) {
+            NSDictionary *dic = [json objectForKey:@"info"];
+            NSArray *arr = [dic objectForKey:@"list"];
+            for (NSDictionary *lDic in arr) {
+                MyFeeRateModel *model = [MyFeeRateModel model];
+                [model setValuesForKeysWithDictionary:lDic];
+                [self.listData addObject:model];
+            }
+            [self.table reloadData];
+        } withFailureBlock:^(NSString *errorMessage, int code) {
+            
+        }];
+    }
 }
 
 #pragma mark - table
@@ -56,7 +86,6 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (self.listData.count > 0) {
         return [self.title isEqualToString:@"收款费率"] ? 140 : 115;
-//        return 140;
     }else{
         return 180;
     }
@@ -67,7 +96,7 @@
     if (self.listData.count > 0) {
         if ([self.title isEqualToString:@"收款费率"]) {
             static NSString *identifier = @"ReciveFeeCell";
-            MyFeeRateModel *model = [self.listData objectAtIndex:indexPath.row];
+            MyFeeRateReceiveModel *model = [self.listData objectAtIndex:indexPath.row];
             ReciveFeeCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
             if (!cell) {
                 cell = [[ReciveFeeCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];

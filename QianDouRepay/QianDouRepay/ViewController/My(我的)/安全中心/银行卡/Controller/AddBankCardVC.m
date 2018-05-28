@@ -8,7 +8,7 @@
 
 #import "AddBankCardVC.h"
 
-@interface AddBankCardVC ()<UITableViewDelegate,UITableViewDataSource>
+@interface AddBankCardVC ()<UITableViewDelegate,UITableViewDataSource,STPickerSingleDelegate>
 
 @property (nonatomic , strong) BaseTableView *table;
 
@@ -16,12 +16,18 @@
 
 @property (nonatomic , strong) UIView *tableFootView;
 
+@property (nonatomic , strong) NSMutableArray *bankDataArr; // 银行数据
+@property (nonatomic , assign) NSInteger      indexPathRow; // 选择第几行
+@property (nonatomic , copy  ) NSString       *bankCode; // 银行联行号
+@property (nonatomic , copy  ) NSString       *verifyCode; // 验证码
+
 @end
 
 @implementation AddBankCardVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.title = @"银行卡";
     self.view.backgroundColor = WhiteColor;
     [self loadFormData];
@@ -54,7 +60,15 @@
         model.placeHolder = placeHoldArray[i];
         model.reqKey = keyArray[i];
         model.boardType = UIKeyboardTypeDefault;
-        if(i == 3){
+        if (i == 0) {
+            model.cellType = cellTypeTitle_FieldType;
+            model.canEdit = NO;
+            model.text = [UserInfoDic objectForKey:@"realname"];
+        }else if (i == 1){
+            model.cellType = cellTypeTitle_FieldType;
+            model.canEdit = NO;
+            model.text = [UserInfoDic objectForKey:@"idcard"];
+        }else if(i == 3){
             model.cellType = cellTypeTitle_FieldSelection;
             model.canEdit = NO;
             model.text = @"";
@@ -100,13 +114,42 @@
     cell.cellTextFieldBlock = ^(NSString *text) {
         [self notiTextField:text andIndex:indexPath];
     };
+    cell.getVerifyCodeBlock = ^{
+        [self getVerifyCode];
+    };
     
     [cell setFormcellModel:model];
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    
+    _indexPathRow = indexPath.row;
+    if (indexPath.row == 3) {
+        [self showLoading];
+        [self.bankDataArr removeAllObjects];
+        [AppNetworking requestWithType:HttpRequestTypeGet withUrlString:getBankData withParaments:nil withSuccessBlock:^(id json) {
+            [self dismissLoading];
+            
+            NSArray *info = [json objectForKey:@"info"];
+            for (NSDictionary *dic in info) {
+                BankInfoModel *model = [BankInfoModel mj_objectWithKeyValues:dic];
+                [self.bankDataArr addObject:model];
+            }
+            NSMutableArray *bankA = [NSMutableArray array];
+            for (BankInfoModel *model in self.bankDataArr) {
+                [bankA addObject:model.name];
+            }
+            STPickerSingle *single = [[STPickerSingle alloc]init];
+            [single setArrayData:bankA];
+            [single setTitle:@""];
+            [single setTitleUnit:@""];
+            single.widthPickerComponent = 200;
+            [single setDelegate:self];
+            [single show];
+        } withFailureBlock:^(NSString *errorMessage, int code) {
+            
+        }];
+    }
 }
 
 
@@ -115,12 +158,91 @@
     model.text = text;
 }
 
+#pragma mark - STPickerSingle 代理
+- (void)pickerSingle:(STPickerSingle *)pickerSingle selectedTitle:(NSString *)selectedTitle{
+    FormCellModel *model = [self.formData objectAtIndex:_indexPathRow];
+    model.text = selectedTitle;
+    [self.table reloadData];
+    
+    for (BankInfoModel *model in self.bankDataArr) {
+        if ([model.name isEqualToString:selectedTitle]) {
+            NSLog(@"code == %@",model.number);
+            self.bankCode = model.number;
+        }
+    }
+}
 
-
+#pragma mark - 确定
 - (void)sureCommit{
+    FormCellModel *model2 = self.formData[2]; // 银行卡号
+    FormCellModel *model3 = self.formData[3]; // 开户行
+    FormCellModel *model4 = self.formData[4]; // 手机号
+    FormCellModel *model5 = self.formData[5]; // 验证码
+    if ([model2.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入银行卡号"];
+        return;
+    }
+    if (![AppCommon isBankCard:model2.text]) {
+        [self showErrorText:@"请输入正确的银行卡号"];
+        return;
+    }
+    if ([model3.text isEqualToString:@""]) {
+        [self showErrorText:@"请选择银行"];
+        return;
+    }
+    if ([model4.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入手机号"];
+        return;
+    }
+    if ([model5.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入验证码"];
+        return;
+    }
+    if (![model5.text isEqualToString:self.verifyCode]) {
+        [self showErrorText:@"验证码不正确"];
+        return;
+    }
+    
+    NSDictionary *dic = @{@"userid":UserID,
+                          @"bank_num":model2.text,
+                          @"bank_name":model3.text,
+                          @"bank_number":self.bankCode,
+                          @"phone":model4.text,
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:add_CashCard withParaments:dic withSuccessBlock:^(id json) {
+        [self showSuccessText:@"绑定成功"];
+        // 提现卡 1-已绑卡，0-未绑卡
+        [UserInfoDic setObject:@"1" forKey:@"cash_bank"];
+        [UserInfoCache archiveUserInfo:UserInfoDic keyedArchiveName:USER_INFO_CACHE];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            POPVC;
+        });
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
     
 }
 
+- (void)getVerifyCode{
+    
+    FormCellModel *model6 = self.formData[4]; // 手机号
+    if ([model6.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入手机号"];
+        return;
+    }
+    [self showLoading];
+    NSDictionary *dic = @{@"phone":model6.text};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:add_cashCardSMS withParaments:dic withSuccessBlock:^(id json) {
+        [self dismissLoading];
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.verifyCode = [NSString stringWithFormat:@"%ld",[[infoDic objectForKey:@"code"] integerValue]];
+        [[NSNotificationCenter defaultCenter]postNotificationName:CountingDownNotiName object:nil];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
+}
 
 #pragma mark - LazyLoad
 
@@ -156,6 +278,14 @@
         
     }
     return _tableFootView;
+}
+
+
+- (NSMutableArray *)bankDataArr{
+    if (!_bankDataArr) {
+        _bankDataArr = [NSMutableArray array];
+    }
+    return _bankDataArr;
 }
 
 @end

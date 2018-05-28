@@ -10,9 +10,17 @@
 
 @interface MyDivideProfitModel : BaseModel
 
+// id
+
+/** - */
 @property (nonatomic , copy) NSString *phone;
-@property (nonatomic , copy) NSString *time;
+/** 时间 */
+@property (nonatomic , copy) NSString *add_time;
+/** 分润金额 */
 @property (nonatomic , copy) NSString *money;
-@property (nonatomic , copy) NSString *divide;
+/** 分润类型1-还款2-收款 */
+@property (nonatomic , copy) NSString *type;
+/** 还款/收款金额 */
+@property (nonatomic , copy) NSString *log_money;
 
 @end

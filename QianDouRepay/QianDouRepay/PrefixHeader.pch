@@ -11,6 +11,8 @@
 
 #import "NetApi.h"
 #import "Define.h"
+#import "BankInfoModel.h"
+#import "QDWebViewController.h"
 
 #pragma mark - 系统
 #import <CommonCrypto/CommonDigest.h>
@@ -31,6 +33,11 @@
 #import <SVProgressHUD.h>
 #import <STPickerSingle.h>
 #import <STPickerDate.h>
+#import "SDCycleScrollView.h"
+#import <PPBadgeView.h>
+#import "UIImageView+WebCache.h"
+#import "BRPickerViewMacro.h"
+#import "BRPickerView.h"
 
 
 #pragma mark - 分类
@@ -43,6 +50,8 @@
 
 #pragma mark - 工具
 #import "AppCommon.h"
+#import "UserInfoCache.h"
+#import "AppCache.h"
 #import "AppNetworking.h"
 #import "BaseTableView.h"
 #import "AppUIKit.h"
@@ -70,11 +79,11 @@
 
 #define ChannelName         @"App Store" //渠道名称
 #define UMSocialAppKey      @"5ade7e77b27b0a2c160002ec"
-#define WechatAppKey        @""
-#define WechatAppSecret     @""
+#define WechatAppKey        @"wxd69d4baf16dbc338" // 微信 appID
+#define WechatAppSecret     @"a13755ed53d77efb94cdbe808cd70113"
 #define WeChatRedirectURL   @""
-#define QQAppKey            @""
-#define QQAppSecrect        @""
+#define QQAppKey            @"1106821867"    //  第三方平台的appKey（QQ平台为appID）
+#define QQAppSecrect        @"ckBBvqcb7JRKFn7D" // 第三方平台的appSecret（QQ平台为appKey）
 #define QQRedirectURL       @""
 #define SinaAppKey          @""
 #define SinaAppSecrect      @""

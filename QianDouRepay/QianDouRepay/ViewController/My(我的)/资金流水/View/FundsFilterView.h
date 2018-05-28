@@ -11,6 +11,7 @@
 @interface FundsFilterView : UIView
 
 - (void)showInView:(UIView *)view;
-@property (nonatomic, copy) void (^filterBlock)(void);
+
+@property (nonatomic, copy) void (^filterBlock)(BOOL isFilter,NSString *start,NSString *end,NSString *type,NSString *typeStr);
 
 @end

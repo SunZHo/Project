@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "58A9D702D908BB1A44F626990B7B75BF"
+               BlueprintIdentifier = "540C45A777F837BFE4065F3D14E03DFB"
                BlueprintName = "STPickerView"
                ReferencedContainer = "container:Pods.xcodeproj"
                BuildableName = "libSTPickerView.a">

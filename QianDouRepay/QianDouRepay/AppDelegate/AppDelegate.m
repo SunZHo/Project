@@ -21,8 +21,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
+    self.userInfoManager = [[UserInfoManager alloc]init];
     [self appGuideView];
     [self appConfigure];
+    [self configureUMSocialssSDK];
     
     return YES;
 }

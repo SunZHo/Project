@@ -14,6 +14,9 @@
 @property (nonatomic , strong) UIImageView *backImg;
 @property (nonatomic , strong) UILabel *nameLabel;
 @property (nonatomic , strong) UILabel *cardNumLabel;
+@property (nonatomic , strong) UIButton *unBindBtn;
+
+@property (nonatomic, copy) void (^unBindBlock)(void);
 
 @property (nonatomic , strong) ChooseCreditCardModel *chooseModel;
 

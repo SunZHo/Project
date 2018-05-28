@@ -51,10 +51,17 @@
 
 
 - (void)setDividedModel:(MyDivideProfitModel *)dividedModel{
-    self.phoneLabel.text = dividedModel.phone;
-    self.timeLabel.text = dividedModel.time;
-    self.moneyLabel.text = dividedModel.money;
-    self.divideLabel.text = dividedModel.divide;
+    self.phoneLabel.text = [dividedModel.phone stringByReplacingCharactersInRange:NSMakeRange(3, 4) withString:@"****"];
+    
+    self.timeLabel.text = dividedModel.add_time;
+    if ([dividedModel.type integerValue] == 1) {
+        self.moneyLabel.text = [NSString stringWithFormat:@"还款%@元",dividedModel.log_money];
+    }else{
+        self.moneyLabel.text = [NSString stringWithFormat:@"收款%@元",dividedModel.log_money];
+        
+    }
+    self.divideLabel.text = [NSString stringWithFormat:@"分润%@元",dividedModel.money];
+    
 }
 
 

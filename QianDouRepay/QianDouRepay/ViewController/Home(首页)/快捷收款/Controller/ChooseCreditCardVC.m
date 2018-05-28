@@ -15,7 +15,7 @@
 #import "ChooseCreditCardCell.h"
 
 // controller
-#import "AddCreditCardViewController.h"
+#import "AddReceiptCreditCardVC.h"
 
 @interface ChooseCreditCardVC ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -27,22 +27,46 @@
 
 @implementation ChooseCreditCardVC
 
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self loadData];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"选择信用卡";
     
-    for (int i = 0; i < 5; i++) {
-        ChooseCreditCardModel *model = [[ChooseCreditCardModel alloc]init];
-        model.bankName = @"中国建设银行";
-        model.cardNum = @"6214  ****  ****  ****  123";
-        
-        [self.listData addObject:model];
-    }
+//    for (int i = 0; i < 5; i++) {
+//        ChooseCreditCardModel *model = [[ChooseCreditCardModel alloc]init];
+//        model.bank_name = @"中国建设银行";
+//        model.bank_num = @"6214221231231122123";
+//
+//        [self.listData addObject:model];
+//    }
     
     [self.view addSubview:self.table];
     
     [self setNavRightBarItem];
 }
+
+- (void)loadData{
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{@"userid":UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:receipt_CreditCardList withParaments:dic withSuccessBlock:^(id json) {
+        NSArray *infoA = [[json objectForKey:@"info"] objectForKey:@"list"];
+        for (NSDictionary *cardDic in infoA) {
+            ChooseCreditCardModel *model = [ChooseCreditCardModel mj_objectWithKeyValues:cardDic];
+            
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table reloadData];
+    }];
+}
+
+
 
 - (void)setNavRightBarItem{
     UIButton *plusBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -55,7 +79,7 @@
 
 #pragma mark - 添加信用卡
 - (void)plusClick{
-    AddCreditCardViewController *addCreditVc = [[AddCreditCardViewController alloc]init];
+    AddReceiptCreditCardVC *addCreditVc = [[AddReceiptCreditCardVC alloc]init];
     PUSHVC(addCreditVc);
 }
 
@@ -88,6 +112,18 @@
             cell = [[ChooseCreditCardCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         }
         [cell setChooseModel:model];
+        cell.unBindBlock = ^{
+            NSDictionary *dic = @{@"crediteid":model.ID,
+                                  @"userid":UserID
+                                  };
+            [self showLoading];
+            [AppNetworking requestWithType:HttpRequestTypePost withUrlString:receipt_unBindCreditCard withParaments:dic withSuccessBlock:^(id json) {
+                [self showSuccessText:@"解绑成功"];
+                [self loadData];
+            } withFailureBlock:^(NSString *errorMessage, int code) {
+                
+            }];
+        };
         
         return cell;
     }else{
@@ -116,12 +152,45 @@
     
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (self.listData.count > 0) {
+        ChooseCreditCardModel *model = [self.listData objectAtIndex:indexPath.row];
+        [self receiptMoneyOption:model.ID];
+    }
+}
+
+- (void)receiptMoneyOption:(NSString *)creditID{
+    NSDictionary *dic = @{@"userid":UserID,
+                          @"debitid":self.receiptBankCardID,
+                          @"crediteid":creditID,
+                          @"money":self.receiptMoney
+                          };
+    [self showLoading];
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:receipt_Pay withParaments:dic withSuccessBlock:^(id json) {
+        [self dismissLoading];
+        NSString *html = [[json objectForKey:@"info"] objectForKey:@"hx_page"];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            QDWebViewController *web = [[QDWebViewController alloc]init];
+            web.loadHtml = html;
+            web.isReceiptPush = YES;
+            [self.navigationController pushViewController:web animated:YES];
+            
+        });
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
+}
+
+
+
+
 
 #pragma mark - LazyLoad
 
 - (BaseTableView *)table{
     if (!_table) {
-        _table = [[BaseTableView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        _table = [[BaseTableView alloc]initWithFrame:CGRectMake(0, 64 + SafeAreaTopHeight, SCREEN_WIDTH, SCREEN_HEIGHT - (64 + SafeAreaTopHeight))];
         _table.dataSource = self;
         _table.delegate = self;
         _table.backgroundColor = WhiteColor;

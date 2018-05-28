@@ -7,7 +7,16 @@
 //
 
 #import "BaseViewController.h"
+#import "RepaymentPlanModel.h"
 
 @interface RepaymentPlanDetailVC : BaseViewController
+
+/** 计划是否执行完成 */
+@property (nonatomic , assign) BOOL isFinish ;
+/** 信用卡id */
+@property (nonatomic , copy) NSString *cardid;
+
+@property (nonatomic , strong) RepaymentPlanModel *repayPlanModel;
+
 
 @end

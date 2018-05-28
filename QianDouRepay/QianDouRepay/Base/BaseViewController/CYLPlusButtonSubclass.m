@@ -9,6 +9,7 @@
 #import "CYLPlusButtonSubclass.h"
 #import "CYLTabBarController.h"
 #import "ShareViewController.h"
+#import "LoginViewController.h"
 
 
 @interface CYLPlusButtonSubclass ()<UIActionSheetDelegate> {
@@ -116,8 +117,15 @@
 
 - (void)clickPublish {
     UIViewController *vc = [AppCommon getCurrentVC];
-    ShareViewController *shareVC = [[ShareViewController alloc]init];
-    [vc.navigationController pushViewController:shareVC animated:YES];
+    if ([LoginStatus integerValue] == 1) {
+        ShareViewController *shareVC = [[ShareViewController alloc]init];
+        [vc.navigationController pushViewController:shareVC animated:YES];
+    }else{
+        LoginViewController *loginVc = [[LoginViewController alloc]init];
+        UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loginVc];
+        [vc presentViewController:nav animated:NO completion:nil];
+    }
+    
     
 }
 

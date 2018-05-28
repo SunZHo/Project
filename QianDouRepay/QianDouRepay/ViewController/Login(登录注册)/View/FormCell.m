@@ -39,6 +39,7 @@
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldChanged:) name:UITextFieldTextDidChangeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(countDownNoti) name:OYCountDownNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startCountDown) name:CountingDownNotiName object:nil];
     }
     return self;
 }
@@ -149,14 +150,16 @@
 }
 
 - (void)countDownClick{
+    if (self.getVerifyCodeBlock) {
+        self.getVerifyCodeBlock();
+    }
+}
+
+- (void)startCountDown{
     kCountDownManager.timeInterval = 60;
     [kCountDownManager start];
     self.hasCountDown = YES;
-    
-//    [AppUIKit countingDownWithButton:self.countDownBtn];
-    
 }
-
 
 #pragma mark UITextFieldDelegate
 - (void)textFieldDidEndEditing:(UITextField *)textField{

@@ -10,4 +10,7 @@
 
 @interface ChooseBankCardVC : BaseViewController
 
+/** 收款钱数 */
+@property (nonatomic , copy) NSString *receiptMoney;
+
 @end

@@ -57,5 +57,6 @@ pod 'WRNavigationBar'
 pod 'SVProgressHUD', '~> 2.2.2'
 pod 'TYCyclePagerView'
 pod 'STPickerView', '2.4'
+pod 'PPBadgeView'
 
 end

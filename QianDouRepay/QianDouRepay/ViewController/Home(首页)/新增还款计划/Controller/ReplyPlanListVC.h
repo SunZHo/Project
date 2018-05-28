@@ -10,4 +10,7 @@
 
 @interface ReplyPlanListVC : BaseViewController
 
+/** 信用卡id */
+@property (nonatomic , copy) NSString *cardid;
+
 @end

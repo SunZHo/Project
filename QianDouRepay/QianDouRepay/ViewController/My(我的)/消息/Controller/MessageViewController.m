@@ -13,12 +13,16 @@
 
 // view
 #import "MessageCell.h"
+#import "NoticeDetailVC.h"
 
 @interface MessageViewController ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic , strong) BaseTableView *table;
 
 @property (nonatomic , strong) NSMutableArray *listData;
+
+@property (nonatomic , assign) NSInteger page ;
+@property (nonatomic , assign) NSInteger totalpage ;
 
 @end
 
@@ -30,21 +34,58 @@
     self.view.backgroundColor = WhiteColor;
     [self setNavRightBarItem];
     
-    for (int i = 0; i < 10; i++) {
-        MessageModel *model = [[MessageModel alloc]init];
-        model.time = @"2018-01-12 14:30";
-        model.title = @"消息标题";
-        model.content = @"您好，您的信用卡(6123123412341234123)成功消费198.00您好，您的信用卡(6123123412341234123)成功消费198.00......";
-        if (i % 2 == 1) {
-            model.isRead = YES;
-        }else{
-            model.isRead = NO;
-        }
-        [self.listData addObject:model];
-    }
-    
     [self.view addSubview:self.table];
+    [self loadData];
 }
+
+- (void)loadData{
+    self.page = 1;
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{@"page" : [NSString stringWithFormat:@"%ld",self.page],
+                          @"userid":UserID
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_MessageInfo withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.totalpage  = [[infoDic objectForKey:@"all_page"] integerValue];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *dicc in arr) {
+            MessageModel *model = [MessageModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+}
+
+
+- (void)loadMoreData{
+    self.page ++;
+    if (self.page >= self.totalpage) {
+        [self.table.mj_footer endRefreshingWithNoMoreData];
+        return;
+    }
+    NSDictionary *dic = @{@"page" : [NSString stringWithFormat:@"%ld",self.page],
+                          @"userid":UserID
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_newsInfo withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *dicc in arr) {
+            MessageModel *model = [MessageModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+}
+
+
 
 - (void)setNavRightBarItem{
     UIButton *billCardBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -59,7 +100,12 @@
 
 
 - (void)allRead{
-    
+    NSDictionary *dic = @{@"userid":UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_MessageAllread withParaments:dic withSuccessBlock:^(id json) {
+        [self loadData];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
 }
 
 
@@ -123,8 +169,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     MessageModel *model = [self.listData objectAtIndex:indexPath.row];
-    model.isRead = YES;
+    model.read = @"1";
     [self.table reloadData];
+    NoticeDetailVC *noti = [[NoticeDetailVC alloc]init];
+    noti.notiID = model.ID;
+    PUSHVC(noti);
+    
 }
 
 
@@ -137,6 +187,14 @@
         _table.delegate = self;
         _table.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         _table.backgroundColor = WhiteColor;
+        __weak typeof(&*self)weakSelf = self;
+        _table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [weakSelf loadData];
+        }];
+        
+        _table.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [weakSelf loadMoreData];
+        }];
     }
     return _table;
 }

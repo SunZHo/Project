@@ -51,7 +51,7 @@
     
     // 设置是 广泛使用WRNavigationBar，还是局部使用WRNavigationBar，目前默认是广泛使用
     [WRNavigationBar wr_widely];
-    [WRNavigationBar wr_setBlacklist:@[@"TabBarVC",
+    [WRNavigationBar wr_setBlacklist:@[@"SpecialController",
                                        @"TZPhotoPickerController",
                                        @"TZGifPhotoPreviewController",
                                        @"TZAlbumPickerController",
@@ -73,17 +73,14 @@
 
 #pragma mark - tabbar代理
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController{
-//    if ([viewController.childViewControllers[0] isKindOfClass:[MyViewController class]]) {
-//        LoginViewController *loginVc = [[LoginViewController alloc]init];
-//        UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loginVc];
-//        [tabBarController presentViewController:nav animated:NO completion:nil];
-//        return NO;
-//    }
+    if ([viewController.childViewControllers[0] isKindOfClass:[MyViewController class]] && [LoginStatus integerValue] == 0) {
+        LoginViewController *loginVc = [[LoginViewController alloc]init];
+        UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:loginVc];
+        [tabBarController presentViewController:nav animated:NO completion:nil];
+        return NO;
+    }
     return YES;
 }
-
-
-
 
 
 

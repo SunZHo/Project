@@ -51,6 +51,7 @@
         model.canEdit = YES;
         model.text = @"";
         model.cellType = cellTypeTitle_FieldType;
+        model.isSecureText = YES;
         [self.formData addObject:model];
     }
 }
@@ -94,6 +95,36 @@
 
 
 - (void)sureCommit{
+    FormCellModel *model = self.formData[0]; // 原密码
+    FormCellModel *model1 = self.formData[1]; // 新密码
+    FormCellModel *model2 = self.formData[2]; // 确认密码
+    
+    if ([model.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入原密码"];
+        return;
+    }
+    if ([model1.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入新密码"];
+        return;
+    }
+    if (![model1.text isEqualToString:model2.text]) {
+        [self showErrorText:@"两次输入不一致"];
+        return;
+    }
+    
+    NSDictionary *dic = @{@"userid":UserID,
+                          @"oldpass":model.text,
+                          @"newpass":model1.text
+                          };
+    
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_changePwd withParaments:dic withSuccessBlock:^(id json) {
+        [self showSuccessText:@"修改成功"];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.navigationController popViewControllerAnimated:YES];
+        });
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
     
 }
 

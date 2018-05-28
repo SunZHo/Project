@@ -54,9 +54,9 @@
 - (void)setMyFeeModel:(MyFeeRateModel *)myFeeModel{
     _myFeeModel = myFeeModel;
     
-    self.nameLabel.text = myFeeModel.pathName;
+    self.nameLabel.text = myFeeModel.name;
     
-    self.D0Label.text = [NSString stringWithFormat:@"D0交易：%@",myFeeModel.D0];
+    self.D0Label.text = [NSString stringWithFormat:@"D0交易：%@%%+%@元/笔",myFeeModel.pay_cost,myFeeModel.cash_fee];
     
 }
 

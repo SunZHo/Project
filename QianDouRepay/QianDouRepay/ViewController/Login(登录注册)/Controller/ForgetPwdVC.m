@@ -18,6 +18,7 @@
 @property (nonatomic , strong) UIImageView *topImage;
 @property (nonatomic , strong) LoginHeadView *headView;
 @property (nonatomic , strong) UIButton *sureBtn;
+@property (nonatomic , copy) NSString *verifyCode;
 
 @end
 
@@ -83,6 +84,9 @@
     cell.cellTextFieldBlock = ^(NSString *text) {
         [self notiTextField:text andIndex:indexPath];
     };
+    cell.getVerifyCodeBlock = ^{
+        [self getVerifyCode];
+    };
     
     [cell setFormcellModel:model];
     return cell;
@@ -139,12 +143,66 @@
 
 
 - (void)sureClick{
+    FormCellModel *model0 = self.formData[0];
+    FormCellModel *model1 = self.formData[1];
+    FormCellModel *model2 = self.formData[2];
+    FormCellModel *model3 = self.formData[3];
+    if ([model0.text isEqualToString:@""]) {
+        [self showErrorText:@"请填写手机号"];
+        return;
+    }
+    if ([model1.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入短信验证码"];
+        return;
+    }
+    if (![model1.text isEqualToString:self.verifyCode]) {
+        [self showErrorText:@"验证码错误"];
+        return;
+    }
+    if ([model2.text isEqualToString:@""]) {
+        [self showErrorText:@"请填写密码"];
+        return;
+    }
+    if (![model2.text isEqualToString:model3.text]) {
+        [self showErrorText:@"两次输入密码不一致"];
+        return;
+    }
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    [dic setValue:model0.text forKey:@"phone"];
+    [dic setValue:model2.text forKey:@"pass"];
     
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:forgetPwd withParaments:dic withSuccessBlock:^(id json) {
+        [self showSuccessText:[json objectForKey:@"message"]];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.navigationController popViewControllerAnimated:YES];
+        });
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
 }
 
 
 
-
+- (void)getVerifyCode{
+    NSString *phone = @"";
+    FormCellModel *model = self.formData[0];
+    phone = model.text;
+    
+    if (![phone isEqualToString:@""]) {
+        NSDictionary *dic = @{@"phone" : phone};
+        [self showLoading];
+        [AppNetworking requestWithType:HttpRequestTypePost withUrlString:forgetPwdSms withParaments:dic withSuccessBlock:^(id json){
+            [self dismissLoading];
+            NSDictionary *infoDic = [json objectForKey:@"info"];
+            self.verifyCode = [NSString stringWithFormat:@"%ld",[[infoDic objectForKey:@"code"] integerValue]];
+            [[NSNotificationCenter defaultCenter]postNotificationName:CountingDownNotiName object:nil];
+        } withFailureBlock:^(NSString *errorMessage, int code) {
+            
+        }];
+    }else{
+        [self showErrorText:@"请填写手机号"];
+    }
+}
 
 
 

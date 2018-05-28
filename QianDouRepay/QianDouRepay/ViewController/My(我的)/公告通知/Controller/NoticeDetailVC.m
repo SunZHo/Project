@@ -13,7 +13,7 @@
 @property (nonatomic, strong) UIScrollView *scroollView;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *contentLabel;
-@property (nonatomic, strong) UILabel *companyLabel;
+//@property (nonatomic, strong) UILabel *companyLabel;
 @property (nonatomic, strong) UILabel *timeLabel;
 
 
@@ -23,8 +23,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.title = @"公告详情";
+    if (self.isNoti) {
+        self.title = @"公告详情";
+    }else{
+        self.title = @"消息详情";
+    }
     
     [self makeUI];
     
@@ -35,35 +38,50 @@
 
 
 - (void)makeUI{
-    [self.scroollView sd_addSubviews:@[self.titleLabel, self.contentLabel, self.companyLabel, self.timeLabel]];
+//    [self.scroollView sd_addSubviews:@[self.titleLabel, self.contentLabel, self.companyLabel, self.timeLabel]];
+    [self.scroollView sd_addSubviews:@[self.titleLabel, self.timeLabel, self.contentLabel]];
     
-    [self.scroollView setupAutoContentSizeWithBottomView:self.timeLabel bottomMargin:50];
+    [self.scroollView setupAutoContentSizeWithBottomView:self.contentLabel bottomMargin:50];
     
     self.titleLabel.sd_layout.topSpaceToView(self.scroollView, 26).leftEqualToView(self.scroollView).rightEqualToView(self.scroollView).heightIs(15);
     
-    self.contentLabel.sd_layout.topSpaceToView(self.titleLabel, 27).leftSpaceToView(self.scroollView, 12).rightSpaceToView(self.scroollView, 12).autoHeightRatio(0);
+    self.timeLabel.sd_layout.topSpaceToView(self.titleLabel, 12).leftEqualToView(self.titleLabel).rightSpaceToView(self.scroollView, 12).heightIs(12);
+    
+    self.contentLabel.sd_layout.topSpaceToView(self.timeLabel, 27).leftSpaceToView(self.scroollView, 12).rightSpaceToView(self.scroollView, 12).autoHeightRatio(0);
     self.contentLabel.isAttributedContent = YES;
     
-    self.companyLabel.sd_layout.topSpaceToView(self.contentLabel, 40).leftEqualToView(self.contentLabel).rightEqualToView(self.contentLabel).heightIs(12);
+//    self.companyLabel.sd_layout.topSpaceToView(self.contentLabel, 40).leftEqualToView(self.contentLabel).rightSpaceToView(self.scroollView, 12).heightIs(12);
     
-    self.timeLabel.sd_layout.topSpaceToView(self.companyLabel, 12).leftEqualToView(self.contentLabel).rightEqualToView(self.contentLabel).heightIs(12);
+    
     
     
 }
 
 
-- (void)loadData{
-    self.titleLabel.text = @"公告标题";
-    self.contentLabel.text = @"    闲暇时，放一只藤椅在花间，闻着花香，晒着太阳，看白云漫卷，听飞鸟和鸣；晨昏忧乐时，手捧一卷书，让眼前直下三千字，让胸次全无一点尘；灵感来袭时，手触键盘，让飞扬的情思，在噼里啪啦的敲打中，释放干净。闲暇时，放一只藤椅在花间，闻着花香，晒着太阳，看白云漫卷，听飞鸟和鸣；晨昏忧乐时，手捧一卷书，让眼前直下三千字，让胸次全无一点尘；灵感来袭时，手触键盘，让飞扬的情思，在噼里啪啦的敲打中，释放干净。闲暇时，放一只藤椅在花间，闻着花香，晒着太阳，看白云漫卷，听飞鸟和鸣；晨昏忧乐时，手捧一卷书，让眼前直下三千字，让胸次全无一点尘；灵感来袭时，手触键盘，让飞扬的情思，在噼里啪啦的敲打中，释放干净。";
-    NSMutableAttributedString * attributedString = [[NSMutableAttributedString alloc] initWithString:self.contentLabel.text attributes:nil];
-    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyle setLineSpacing:5];//行间距
-    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [self.contentLabel.text length])];
-    [self.contentLabel setAttributedText:attributedString];
-    
-    self.companyLabel.text = @"钱兜代你还";
-    self.timeLabel.text = @"2018-03-20  14:32";
-    
+- (void)loadData{    
+    NSDictionary *dic = @{@"id" : self.notiID};
+    NSString *url = @"";
+    if (self.isNoti) {
+        url = my_newsDetailInfo;
+    }else{
+        url = my_MessageDetail;
+    }
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:url withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.titleLabel.text = [infoDic objectForKey:@"title"];
+        self.contentLabel.text = [NSString stringWithFormat:@"    %@",[AppCommon flattenHTML:[infoDic objectForKey:@"content"] trimWhiteSpace:YES]];
+        NSMutableAttributedString * attributedString = [[NSMutableAttributedString alloc] initWithString:self.contentLabel.text attributes:nil];
+        NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        [paragraphStyle setLineSpacing:5];//行间距
+        [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [self.contentLabel.text length])];
+        [self.contentLabel setAttributedText:attributedString];
+        
+        self.timeLabel.text = [NSDate timeStringFromTimestamp:[[infoDic objectForKey:@"time"] integerValue]formatter:@"yyyy-MM-dd HH:mm"];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+
 }
 
 
@@ -91,7 +109,7 @@
         _scroollView.backgroundColor = WhiteColor;
         [self.view addSubview:_scroollView];
         
-        _scroollView.sd_layout.spaceToSuperView(UIEdgeInsetsZero);
+        _scroollView.sd_layout.topSpaceToView(self.view, 64+SafeAreaTopHeight).leftEqualToView(self.view).rightEqualToView(self.view).bottomEqualToView(self.view);
     }
     return _scroollView;
 }
@@ -109,13 +127,6 @@
         _contentLabel = [AppUIKit labelWithTitle:@"" titleFontSize:12 textColor:HEXACOLOR(0x666666) backgroundColor:nil alignment:0];
     }
     return _contentLabel;
-}
-
-- (UILabel *)companyLabel{
-    if (!_companyLabel) {
-        _companyLabel = [AppUIKit labelWithTitle:@"" titleFontSize:12 textColor:defaultTextColor backgroundColor:nil alignment:NSTextAlignmentRight];
-    }
-    return _companyLabel;
 }
 
 - (UILabel *)timeLabel{

@@ -13,6 +13,10 @@
 @interface FundsFilterView()<UICollectionViewDelegate,UICollectionViewDataSource,STPickerDateDelegate>{
     UIView *backImg;
     UICollectionView *collectView;
+    NSString *startTime;
+    NSString *endTime;
+    NSString *type;
+    NSString *typeStr;
 }
 
 @property (nonatomic , strong) NSMutableArray *textArray;
@@ -34,11 +38,16 @@
 }
 
 -(void)layoutSubview{
-    
+    startTime = @"";
+    endTime = @"";
+    type = @"";
+    typeStr = @"全部";
     NSArray *arr = @[@"全部",@"提现审核中",@"提现成功",@"提现失败",@"分润流水",@"推广奖励"];
+    NSArray *typeA = @[@"",@"3",@"4",@"5",@"2",@"1"];
     for (int i = 0; i < arr.count; i++) {
         FilterModel *model = [[FilterModel alloc]init];
         model.text = arr[i];
+        model.type = typeA[i];
         if (i == 0) {
             model.isChoose = YES;
         }else{
@@ -125,8 +134,15 @@
 
 - (void)sureClick{
     if (self.filterBlock) {
-        self.filterBlock();
+        self.filterBlock(YES,startTime,endTime,type,typeStr);
     }
+    [UIView animateWithDuration:0.3f animations:^{
+        backImg.sd_layout.leftEqualToView(self).rightEqualToView(self).topSpaceToView(self, -325).heightIs(325);
+        [backImg updateLayout];
+        self.alpha = 0;
+    } completion:^(BOOL finished) {
+        [self removeFromSuperview];
+    }];
 }
 
 
@@ -134,7 +150,7 @@
 
 -(void)dismissSelf{
     if (self.filterBlock) {
-        self.filterBlock();
+        self.filterBlock(NO,startTime,endTime,type,typeStr);
     }
     [UIView animateWithDuration:0.3f animations:^{
         backImg.sd_layout.leftEqualToView(self).rightEqualToView(self).topSpaceToView(self, -325).heightIs(325);
@@ -176,10 +192,16 @@
 }
 
 - (void)pickerDate:(STPickerDate *)pickerDate year:(NSInteger)year month:(NSInteger)month day:(NSInteger)day{
-    NSString *text = [NSString stringWithFormat:@"%ld-%ld-%ld",(long) year,(long) month,(long) day];
+    NSString *text = [NSString stringWithFormat:@"%ld-%02ld-%02ld",(long) year,(long) month,(long) day];
     UIButton *btn = [self viewWithTag:pickerDate.tag - 10];
     [btn setTitle:text forState:UIControlStateNormal];
     [btn setTitleColor:defaultTextColor forState:UIControlStateNormal];
+    if (pickerDate.tag - 10 == 1) {
+        startTime = [NSDate timeStringFromTimestamp:[NSDate timestampFromDate:[NSDate date:text WithFormat:@"yyyy-MM-dd"]] formatter:@"yyyy-MM-dd HH:mm:ss"];
+    }else if(pickerDate.tag - 10 == 2){
+        endTime = [NSDate timeStringFromTimestamp:[NSDate timestampFromDate:[NSDate date:text WithFormat:@"yyyy-MM-dd"]] formatter:@"yyyy-MM-dd HH:mm:ss"];
+    }
+    //NSCalendarUnitDay
 }
 
 
@@ -210,6 +232,8 @@
             filtermodel.isChoose = NO;
         }
     }
+    type = model.type;
+    typeStr = model.text;
     [collectView reloadData];
 }
 

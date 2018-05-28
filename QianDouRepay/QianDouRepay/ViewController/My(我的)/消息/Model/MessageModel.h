@@ -10,9 +10,13 @@
 
 @interface MessageModel : BaseModel
 
-@property (nonatomic , assign) BOOL isRead ;
+/** 标题  */
 @property (nonatomic , copy) NSString *title;
+/** 时间 */
 @property (nonatomic , copy) NSString *time;
+/** 内容  */
 @property (nonatomic , copy) NSString *content;
+/** 状态：0-未读，1-已读 */
+@property (nonatomic , copy) NSString *read ;
 
 @end

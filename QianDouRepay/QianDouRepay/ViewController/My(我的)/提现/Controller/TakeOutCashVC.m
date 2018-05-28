@@ -14,6 +14,7 @@
 
 // vc
 #import "CashRecordViewController.h"
+#import "AddBankCardVC.h"
 
 @interface TakeOutCashVC ()<UITextFieldDelegate>
 
@@ -34,9 +35,19 @@
 /** 确认提现 */
 @property (nonatomic , strong) UIButton *sureButton;
 
+/**  */
+@property (nonatomic , strong) UILabel *explanLabel;
+
+@property (nonatomic , copy) NSString *member_cash;// 提现手续费
+@property (nonatomic , copy) NSString *account_money; // 可提现金额min_money
+@property (nonatomic , copy) NSString *min_money; // 起提金额
 @end
 
 @implementation TakeOutCashVC
+
+- (void)viewWillAppear:(BOOL)animated{
+    [self loadBankData];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -65,9 +76,37 @@
 
 
 - (void)loadData{
-    self.bankView.bankCard = @"尾号1234储蓄卡";
-    self.bankView.bankName = @"中国建设银行";
-    self.aviliableLabel.text = @"可提现金额￥2000.00";
+    NSDictionary *dic = @{@"userid":UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:takeOutCashInfo withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.account_money = [infoDic objectForKey:@"account_money"]; // 账户余额
+        self.member_cash = [infoDic objectForKey:@"member_cash"]; // 提现手续费 3表示3%
+        self.min_money = [infoDic objectForKey:@"min_money"];
+        self.aviliableLabel.text = [NSString stringWithFormat:@"可提现金额￥%@",self.account_money];
+        self.explanLabel.text = [NSString stringWithFormat:@"说明：手续费为提现金额的%@%%",self.member_cash];
+//        [self loadBankData];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
+}
+
+- (void)loadBankData{
+    NSDictionary *dic = @{@"userid":UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:CashCardInfo withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSString *cardnum = [infoDic objectForKey:@"bank_num"];
+        NSString *bankname = [infoDic objectForKey:@"bank_name"];
+        self.bankView.bankCard = [NSString stringWithFormat:@"尾号%@储蓄卡",[cardnum substringFromIndex:cardnum.length - 4]];
+        self.bankView.bankName = bankname;
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+}
+
+- (void)changeBankCard{
+    AddBankCardVC *vc = [[AddBankCardVC alloc]init];
+    PUSHVC(vc);
 }
 
 - (void)makeUI{
@@ -90,8 +129,8 @@
     
     [self.view addSubview:self.sureButton];
     
-    UILabel *explanLabel = [AppUIKit labelWithTitle:@"说明：手续费为提现金额的3%" titleFontSize:12 textColor:HEXACOLOR(0xf68029) backgroundColor:nil alignment:0];
-    [self.view addSubview:explanLabel];
+    _explanLabel = [AppUIKit labelWithTitle:@"" titleFontSize:12 textColor:HEXACOLOR(0xf68029) backgroundColor:nil alignment:0];
+    [self.view addSubview:_explanLabel];
     
     
     self.aviliableLabel.sd_layout.topSpaceToView(self.bankView, 35).leftSpaceToView(self.view, 12).heightIs(12).rightSpaceToView(self.view, 12);
@@ -107,7 +146,7 @@
     
     self.sureButton.sd_layout.topSpaceToView(self.cashFeeLabel, 50).leftEqualToView(self.aviliableLabel).heightIs(44).rightEqualToView(self.aviliableLabel);
     
-    explanLabel.sd_layout.topSpaceToView(self.sureButton, 20).leftEqualToView(self.aviliableLabel).heightIs(12).rightEqualToView(self.aviliableLabel);
+    _explanLabel.sd_layout.topSpaceToView(self.sureButton, 20).leftEqualToView(self.aviliableLabel).heightIs(12).rightEqualToView(self.aviliableLabel);
     
 }
 
@@ -134,37 +173,71 @@
 // 确认提现
 - (void)sureTakeOut{
     [self.view endEditing:YES];
+    if ([self.account_money floatValue] <= 0) {
+        [self showErrorText:@"余额不足"];
+        return;
+    }
+    if ([self.inputMoneyTF.text floatValue] < [self.min_money floatValue]) {
+        [self showErrorText:[NSString stringWithFormat:@"最少提现%@元",self.min_money]];
+        return;
+    }
+    
     MJWeakSelf;
-    self.title = @"提现结果";
-    self.navigationItem.rightBarButtonItems  = @[];
-    TakeCashResultView *resultV = [[TakeCashResultView alloc]initWithFrame:CGRectMake(0, 64 + SafeAreaTopHeight, SCREEN_WIDTH, SCREEN_HEIGHT)];
-    resultV.isSuccess = NO;
-    resultV.ClickBlock = ^(blockType type) {
-        weakSelf.title = @"提现";
-        [weakSelf setNavRightBarItem];
-        if (type == blockTypeReset) {
-            
-        }else if (type == blockTypeGoback){
-            [weakSelf.navigationController popViewControllerAnimated:YES];
-        }else if (type == blockTypeRecord){
-            CashRecordViewController *recordVC = [[CashRecordViewController alloc]init];
-            [weakSelf.navigationController pushViewController:recordVC animated:YES];
-        }
-    };
-    [resultV showInView:self.view];
+    
+    NSDictionary *dic = @{@"userid":UserID,
+                          @"money":self.inputMoneyTF.text,
+                          @"type":@"T1"
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:takeOutCashApply withParaments:dic withSuccessBlock:^(id json) {
+        self.title = @"提现结果";
+        self.navigationItem.rightBarButtonItems  = @[];
+        TakeCashResultView *resultV = [[TakeCashResultView alloc]initWithFrame:CGRectMake(0, 64 + SafeAreaTopHeight, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        resultV.isSuccess = YES;
+        resultV.ClickBlock = ^(blockType type) {
+            weakSelf.title = @"提现";
+            [weakSelf setNavRightBarItem];
+            if (type == blockTypeReset) {
+                
+            }else if (type == blockTypeGoback){
+                [weakSelf.navigationController popViewControllerAnimated:YES];
+            }else if (type == blockTypeRecord){
+                CashRecordViewController *recordVC = [[CashRecordViewController alloc]init];
+                [weakSelf.navigationController pushViewController:recordVC animated:YES];
+            }
+        };
+        [resultV showInView:self.view];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        self.title = @"提现结果";
+        self.navigationItem.rightBarButtonItems  = @[];
+        TakeCashResultView *resultV = [[TakeCashResultView alloc]initWithFrame:CGRectMake(0, 64 + SafeAreaTopHeight, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        resultV.isSuccess = NO;
+        resultV.ClickBlock = ^(blockType type) {
+            weakSelf.title = @"提现";
+            [weakSelf setNavRightBarItem];
+            if (type == blockTypeReset) {
+                
+            }else if (type == blockTypeGoback){
+                [weakSelf.navigationController popViewControllerAnimated:YES];
+            }else if (type == blockTypeRecord){
+                CashRecordViewController *recordVC = [[CashRecordViewController alloc]init];
+                [weakSelf.navigationController pushViewController:recordVC animated:YES];
+            }
+        };
+        [resultV showInView:self.view];
+    }];
     
 }
 
 // 全部提现
 - (void)takeOutAllMoney{
-    self.inputMoneyTF.text = @"2000";
+    self.inputMoneyTF.text = self.account_money;
     [self textFiledTextDidChanged];
 }
 
 #pragma mark - TF 变动通知
 - (void)textFiledTextDidChanged{
     
-    self.cashFeeLabel.text = [NSString stringWithFormat:@"手续费￥%.2f",[self.inputMoneyTF.text floatValue] * 0.03];
+    self.cashFeeLabel.text = [NSString stringWithFormat:@"手续费￥%.2f",[self.inputMoneyTF.text floatValue] * [self.member_cash floatValue] / 100];
 }
 
 
@@ -193,6 +266,9 @@
 - (TakeOutCashBankView *)bankView{
     if (!_bankView) {
         _bankView = [[TakeOutCashBankView alloc]initWithFrame:CGRectMake(0, 64 + SafeAreaTopHeight, SCREEN_WIDTH, 88)];
+        UITapGestureRecognizer *tapG = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(changeBankCard)];
+        _bankView.userInteractionEnabled = YES;
+        [_bankView addGestureRecognizer:tapG];
     }
     return _bankView;
 }

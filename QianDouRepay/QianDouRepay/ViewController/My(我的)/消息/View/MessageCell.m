@@ -53,9 +53,9 @@
 
 - (void)setMessageModel:(MessageModel *)messageModel{
     self.titleLabel.text = messageModel.title;
-    self.timeLabel.text = messageModel.time;
+    self.timeLabel.text = [NSDate timeStringFromTimestamp:[messageModel.time integerValue]formatter:@"yyyy-MM-dd HH:mm"];
     self.contentLabel.text = messageModel.content;
-    if (messageModel.isRead) {
+    if ([messageModel.read integerValue] == 1) {
         self.noteImg.sd_layout.topSpaceToView(self.contentView, 23).leftSpaceToView(self.contentView, 4).widthIs(1).heightIs(6);
         self.noteImg.backgroundColor = [UIColor clearColor];
     }else{

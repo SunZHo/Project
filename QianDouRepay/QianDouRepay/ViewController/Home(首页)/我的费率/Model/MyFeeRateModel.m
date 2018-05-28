@@ -11,3 +11,7 @@
 @implementation MyFeeRateModel
 
 @end
+
+@implementation MyFeeRateReceiveModel
+
+@end

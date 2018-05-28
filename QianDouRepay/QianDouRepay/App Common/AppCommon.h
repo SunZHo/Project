@@ -92,9 +92,18 @@
 + (void)drawDashLine:(UIView *)lineView lineLength:(int)lineLength lineSpacing:(int)lineSpacing lineColor:(UIColor *)lineColor;
 
 
+/**
+ 判断是不是银行卡
 
+ @param cardNumber -
+ @return -
+ */
++ (BOOL)isBankCard:(NSString *)cardNumber;
 
+/** 判断是否是身份证号码 */
++ (BOOL)isIDCard:(NSString *)identityString;
 
-
+/** 银行卡加*** */
++ (NSString *)getNewBankNumWitOldBankNum:(NSString *)bankNum;
 
 @end

@@ -26,6 +26,12 @@
 
 @property (nonatomic , strong) UIView *rightBarCustomView;
 
+@property (nonatomic , assign) NSInteger page;
+@property (nonatomic , assign) NSInteger totalpage ;
+@property (nonatomic , copy) NSString *startTime;
+@property (nonatomic , copy) NSString *endTime;
+@property (nonatomic , copy) NSString *type;
+
 @end
 
 @implementation FundsFlowViewController
@@ -36,22 +42,27 @@
     self.view.backgroundColor = WhiteColor;
     UIBarButtonItem *billItem = [[UIBarButtonItem alloc] initWithCustomView:self.rightBarCustomView];
     self.navigationItem.rightBarButtonItems  = @[billItem];
-    for (int i = 0; i < 10; i++) {
-        FundsFlowModel *model = [[FundsFlowModel alloc]init];
-        model.time = @"2018-01-12 14:30";
-        if (i % 2 == 1) {
-            model.money = @"-200.00";
-            model.type = @"提现成功";
-            
-        }else{
-            model.money = @"+20.00";
-            model.type = @"收款分润";
-            
-        }
-        [self.listData addObject:model];
-    }
+    self.startTime = @"";
+    self.endTime = @"";
+    self.type = @"";
+//    for (int i = 0; i < 10; i++) {
+//        FundsFlowModel *model = [[FundsFlowModel alloc]init];
+//        model.time = @"2018-01-12 14:30";
+//        if (i % 2 == 1) {
+//            model.money = @"-200.00";
+//            model.type = @"提现成功";
+//
+//        }else{
+//            model.money = @"+20.00";
+//            model.type = @"收款分润";
+//
+//        }
+//        [self.listData addObject:model];
+//    }
     
     [self.view addSubview:self.table];
+    
+    [self loadListData];
 }
 
 
@@ -60,12 +71,85 @@
 - (void)filterClick:(UIButton *)optionButton{
     //    [optionButton setTitle:content forState:UIControlStateNormal];
     filterBtn.userInteractionEnabled = NO;
+    MJWeakSelf;
     FundsFilterView *filerView = [[FundsFilterView alloc]init];
-    filerView.filterBlock = ^{
+    filerView.filterBlock = ^(BOOL isFilter, NSString *start, NSString *end, NSString *type,NSString *typeStr) {
+        if (isFilter) {
+            weakSelf.startTime = start;
+            weakSelf.endTime = end;
+            weakSelf.type = type;
+            [filterBtn setTitle:typeStr forState:UIControlStateNormal];
+            CGFloat width = [AppCommon getStringWidthWithFont:15 andString:typeStr];
+            filterBtn.sd_layout.widthIs(width);
+            [weakSelf loadListData];
+        }
         filterBtn.userInteractionEnabled = YES;
     };
     [filerView showInView:self.view];
 }
+
+
+- (void)loadListData{
+    self.page = 1;
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{
+                          @"userid"     : UserID,
+                          @"type"       : self.type,
+                          @"page"       : [NSString stringWithFormat:@"%ld",self.page],
+                          @"start_time" : self.startTime,
+                          @"end_time"   : self.endTime
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_moneyFlowList withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.totalpage  = [[infoDic objectForKey:@"all_page"] integerValue];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *dicc in arr) {
+            FundsFlowModel *model = [FundsFlowModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table reloadData];
+        [self.table endRefresh];
+    }];
+    
+}
+
+- (void)loadMoerListData{
+    self.page ++;
+    if (self.page >= self.totalpage) {
+        [self.table.mj_footer endRefreshingWithNoMoreData];
+        return;
+    }
+    NSDictionary *dic = @{
+                          @"userid"     : UserID,
+                          @"type"       : self.type,
+                          @"page"       : [NSString stringWithFormat:@"%ld",self.page],
+                          @"start_time" : self.startTime,
+                          @"end_time"   : self.endTime
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_moneyFlowList withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSArray *arr = [infoDic objectForKey:@"list"];
+        for (NSDictionary *dicc in arr) {
+            FundsFlowModel *model = [FundsFlowModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table reloadData];
+        [self.table endRefresh];
+    }];
+    
+    
+}
+
 
 
 #pragma mark - table
@@ -125,15 +209,12 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    //    if (self.listData.count > 0) {
-    //        BillModel *model = [self.listData objectAtIndex:indexPath.row];
-    //        BillDetailViewController *detailVC = [[BillDetailViewController alloc]init];
-    //        detailVC.status = model.status;
-    //        PUSHVC(detailVC);
-    //    }
-    
-    FundsFlowDetailVC *detailVC = [[FundsFlowDetailVC alloc]init];
-    PUSHVC(detailVC);
+    if (self.listData.count > 0) {
+        FundsFlowModel *model = [self.listData objectAtIndex:indexPath.row];
+        FundsFlowDetailVC *detailVC = [[FundsFlowDetailVC alloc]init];
+        detailVC.flowID = model.ID;
+        PUSHVC(detailVC);
+    }
 }
 
 
@@ -148,6 +229,14 @@
         _table.delegate = self;
         _table.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         _table.backgroundColor = WhiteColor;
+        __weak typeof(&*self)weakSelf = self;
+        _table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [weakSelf loadListData];
+        }];
+        
+        _table.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [weakSelf loadMoerListData];
+        }];
     }
     return _table;
 }
@@ -162,19 +251,22 @@
 
 - (UIView *)rightBarCustomView{
     if (!_rightBarCustomView) {
-        _rightBarCustomView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 50, 20)];
+        _rightBarCustomView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 100, 20)];
         filterBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [filterBtn addTarget:self action:@selector(filterClick:) forControlEvents:UIControlEventTouchUpInside];
-        [filterBtn setTitle:@"全部" forState:UIControlStateNormal];
+        [filterBtn setTitle:@"筛选" forState:UIControlStateNormal];
         filterBtn.titleLabel.font = kFont(15);
         [filterBtn setTitleColor:defaultTextColor forState:UIControlStateNormal];
-        filterBtn.frame = CGRectMake(0, 0, 35, 20);
+//        filterBtn.frame = CGRectMake(0, 0, 35, 20);
         [_rightBarCustomView addSubview:filterBtn];
         
-        UIImageView *iv = [[UIImageView alloc]initWithFrame:CGRectMake(40, 8, 6, 4)];
+        UIImageView *iv = [[UIImageView alloc]init]; //WithFrame:CGRectMake(40, 8, 6, 4)
         iv.image = IMG(@"sjxx");
         [_rightBarCustomView addSubview:iv];
         
+        iv.sd_layout.rightSpaceToView(_rightBarCustomView, 0).centerYEqualToView(_rightBarCustomView).widthIs(10).heightIs(4);
+        CGFloat width = [AppCommon getStringWidthWithFont:15 andString:@"筛选"];
+        filterBtn.sd_layout.topEqualToView(_rightBarCustomView).rightSpaceToView(iv,5).widthIs(width).heightIs(20);
     }
     return _rightBarCustomView;
 }

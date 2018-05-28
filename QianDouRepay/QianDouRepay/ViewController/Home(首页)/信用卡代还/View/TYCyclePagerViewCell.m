@@ -80,7 +80,46 @@
 
 
 -(void)setCardModel:(CreditCardModel *)cardModel{
+    self.bankLabel.text = cardModel.bank_name;
+    self.cardNumLabel.text = [self getNewBankNumWitOldBankNum:cardModel.bank_num];
+    self.nameLabel.text = cardModel.realname;
+    NSMutableString *str = [NSMutableString stringWithString:cardModel.validity];
+    [str insertString:@"/" atIndex:2];
+    NSArray *arr = [str componentsSeparatedByString:@"/"];
+    NSString *time = [NSString stringWithFormat:@"%@/%@",arr[1],arr[0]];
+    self.timeLabel.text = time;
+}
+
+
+- (NSString *)getNewBankNumWitOldBankNum:(NSString *)bankNum
+{
+    NSMutableString *mutableStr;
+    if (bankNum.length) {
+        mutableStr = [NSMutableString stringWithString:bankNum];
+        for (int i = 0 ; i < mutableStr.length; i ++) {
+            if (i>3&&i<mutableStr.length - 3) {
+                [mutableStr replaceCharactersInRange:NSMakeRange(i, 1) withString:@"*"];
+            }
+        }
+        NSString *text = mutableStr;
+        NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789\b"];
+        text = [text stringByReplacingOccurrencesOfString:@" " withString:@""];
+        NSString *newString = @"";
+        while (text.length > 0) {
+            NSString *subString = [text substringToIndex:MIN(text.length, 4)];
+            newString = [newString stringByAppendingString:subString];
+            if (subString.length == 4) {
+                newString = [newString stringByAppendingString:@" "];
+            }
+            text = [text substringFromIndex:MIN(text.length, 4)];
+        }
+        newString = [newString stringByTrimmingCharactersInSet:[characterSet invertedSet]];
+        return newString;
+    }
+    return bankNum;
     
 }
+
+
 
 @end

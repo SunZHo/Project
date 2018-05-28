@@ -45,9 +45,16 @@
 
 
 - (void)setCashModel:(CashRecordModel *)cashModel{
-    self.moneyLabel.text = cashModel.money;
-    self.timeLabel.text = cashModel.time;
-    self.typeLabel.text = cashModel.type;
+    self.moneyLabel.text = [NSString stringWithFormat:@"￥%@",cashModel.money];
+    self.timeLabel.text = [NSDate timeStringFromTimestamp:[cashModel.time integerValue] formatter:@"yyyy-MM-dd HH:mm"];
+    if ([cashModel.status integerValue]== 0) {
+        self.typeLabel.text = @"处理中";
+    }else if ([cashModel.status integerValue]== 1) {
+        self.typeLabel.text = @"提现成功";
+    }else if ([cashModel.status integerValue]== 2) {
+        self.typeLabel.text = @"提现失败";
+    }
+    
 }
 
 @end

@@ -37,19 +37,41 @@
 
 
 - (void)loadData{
-    NSString *money = @"2345.00";
-    NSString *status = @"提现成功";
-    NSString *tradDesc = @"提现成功，资金扣除";
-    
-    self.statusLabel.text = status;
-    self.moneyLabel.text = [NSString stringWithFormat:@"￥%@",money];
-    self.moneyLabel.attributedText = [AppCommon getRange:NSMakeRange(@"￥".length, money.length) labelStr:[NSString stringWithFormat:@"￥%@",money] Font:kFont(24) Color:defaultTextColor];
-    self.tradDescLabel.text = tradDesc;
     
     self.titleArray = @[@"账户余额",@"冻结金额",@"交易时间"];
-    self.valueArray = @[@"￥100.00",@"￥0.00",@"2018-02-09 14:32:21"];
+//    self.valueArray = @[@"￥100.00",@"￥0.00",@"2018-02-09 14:32:21"];
     
-    
+    NSDictionary *dic = @{@"id":self.flowID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_moneyFlowDetail withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSString *accountMoney = [NSString stringWithFormat:@"￥%@",[infoDic objectForKey:@"account_money"]];
+        NSString *freezeMoney = [NSString stringWithFormat:@"￥%@",[infoDic objectForKey:@"freeze_money"]];
+        NSString *time = [NSDate timeStringFromTimestamp:[[infoDic objectForKey:@"time"] integerValue] formatter:[NSDate ymdHmsFormat]];
+        self.valueArray = @[accountMoney,freezeMoney,time];
+        
+        NSString *money = [infoDic objectForKey:@"money"];
+        NSString *status = @"";
+        if ([[infoDic objectForKey:@"type"] integerValue] == 1) {
+            status = @"推广奖励";
+        }else if ([[infoDic objectForKey:@"type"] integerValue] == 2){
+            status = @"分润流水";
+        }else if ([[infoDic objectForKey:@"type"] integerValue] == 3){
+            status = @"提现审核中";
+        }else if ([[infoDic objectForKey:@"type"] integerValue] == 4){
+            status = @"提现成功";
+        }else if ([[infoDic objectForKey:@"type"] integerValue] == 5){
+            status = @"提现失败";
+        }
+        NSString *tradDesc = [infoDic objectForKey:@"info"];
+        
+        self.statusLabel.text = status;
+        self.moneyLabel.text = [NSString stringWithFormat:@"￥%@",money];
+        self.moneyLabel.attributedText = [AppCommon getRange:NSMakeRange(@"￥".length, money.length) labelStr:[NSString stringWithFormat:@"￥%@",money] Font:kFont(24) Color:defaultTextColor];
+        self.tradDescLabel.text = tradDesc;
+        [self.table reloadData];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
 }
 
 - (void)makeUI{
@@ -147,7 +169,7 @@
         [_tablefootV addSubview:self.tradDescLabel];
         linev.sd_layout.topSpaceToView(_tablefootV, 1).leftSpaceToView(_tablefootV, 12).rightSpaceToView(_tablefootV, 12).heightIs(1);
         leftLabel.sd_layout.topSpaceToView(linev, 22).leftSpaceToView(_tablefootV, 12).widthIs(50).heightIs(12);
-        self.tradDescLabel.sd_layout.topEqualToView(leftLabel).leftSpaceToView(leftLabel, 12).rightSpaceToView(_tablefootV, 12).heightIs(12);
+        self.tradDescLabel.sd_layout.topEqualToView(leftLabel).leftSpaceToView(leftLabel, 12).rightSpaceToView(_tablefootV, 12).autoHeightRatio(0);
     }
     return _tablefootV;
 }

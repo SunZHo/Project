@@ -85,8 +85,40 @@
 
 
 - (void)addClick{
-    ReplyPlanListVC *planVc = [[ReplyPlanListVC alloc]init];
-    PUSHVC(planVc);
+    FormCellModel *model0 = self.formData[0];
+    FormCellModel *model2 = self.formData[2];
+    FormCellModel *model3 = self.formData[3];
+    if ([model0.text isEqualToString:@""]) {
+        [self showErrorText:@"请选择日期"];
+        return;
+    }
+    if ([model2.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入还款金额"];
+        return;
+    }
+    if ([model3.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入拆分笔数"];
+        return;
+    }
+    
+    NSDictionary *dic = @{@"cardid":self.cardid,
+                          @"userid":UserID,
+                          @"date":model0.text,
+                          @"money":[NSString stringWithFormat:@"%.2f",[model2.text floatValue]],
+                          @"num":model3.text
+                          };
+    [self showLoading];
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:creditcard_AddPlan withParaments:dic withSuccessBlock:^(id json) {
+        [self dismissLoading];
+        ReplyPlanListVC *planVc = [[ReplyPlanListVC alloc]init];
+        planVc.cardid = self.cardid;
+        PUSHVC(planVc);
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
+    
 }
 
 

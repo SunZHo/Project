@@ -36,6 +36,13 @@ fprintf(stderr, "-------\n");                                               \
 #define IMAGECONTENT(_STRING) \
 [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:_STRING ofType:nil]]
 
+/// 用户信息
+#define UserInfoDic ApplicationDelegate.userInfoManager.userInfo
+#define UserID ApplicationDelegate.userInfoManager.userId
+#define LoginStatus ApplicationDelegate.userInfoManager.loginStatus
+#define UserPhone [ApplicationDelegate.userInfoManager.userInfo objectForKey:@"phone"]
+#define UserPic [ApplicationDelegate.userInfoManager.userInfo objectForKey:@"pic"]
+#define UserNickName [ApplicationDelegate.userInfoManager.userInfo objectForKey:@"nickname"]
 
 /// UIColor快捷创建
 #define Default_BackgroundGray UIColorFromRGBx(0xf8f7f7)
@@ -98,6 +105,7 @@ fprintf(stderr, "-------\n");                                               \
 #define PATH_OF_DB [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]
 #define DB_PATH [PATH_OF_DB stringByAppendingPathComponent:@"account.db"]
 
+
 #define UserDefaults [NSUserDefaults standardUserDefaults]
 
 #define SafeAreaBottomHeight (IS_IPHONE_X ? 34 : 0)
@@ -108,5 +116,19 @@ fprintf(stderr, "-------\n");                                               \
 
 // pop 控制器
 #define POPVC [self.navigationController popViewControllerAnimated:YES];
+
+
+#pragma mark - 缓存
+
+#define USER_INFO_CACHE @"userInfoCache"                    // 用户信息缓存
+
+/** 银行信息缓存 */
+#define Bank_DataCache @"bankDataCache"                   
+
+#pragma mark - 通知
+
+#define CountingDownNotiName @"startCountDown"
+#define ReceiptCompeleteNotiName @"receiptCompelete"
+
 
 #endif /* Define_h */

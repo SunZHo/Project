@@ -15,7 +15,10 @@
 @property (nonatomic , strong) UILabel *bankNameLabel;
 @property (nonatomic , strong) UILabel *cardNumLabel;
 @property (nonatomic , strong) UILabel *nameLabel;
+@property (nonatomic , strong) UIButton *unBindBtn;
 
 @property (nonatomic , strong) BankCardModel *bankModel;
+
+@property (nonatomic, copy) void (^unBindBlock)(void);
 
 @end

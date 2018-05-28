@@ -28,25 +28,43 @@
     self.title = @"收款记录";
     self.view.backgroundColor = WhiteColor;
     
-    for (int i = 0; i < 10; i++) {
-        BillModel *model = [[BillModel alloc]init];
-        model.time = @"2018-03-29 14:32";
-        if (i % 2 == 1) {
-            model.money = @"通道名称￥500.00";
-            model.type = @"成功";
-            model.status = @"1";
-        }else{
-            model.money = @"通道名称￥500.00";
-            model.type = @"失败";
-            model.status = @"0";
-        }
-        [self.listData addObject:model];
-    }
+//    for (int i = 0; i < 10; i++) {
+//        BillModel *model = [[BillModel alloc]init];
+//        model.time = @"2018-03-29 14:32";
+//        if (i % 2 == 1) {
+//            model.money = @"通道名称￥500.00";
+//            model.type = @"成功";
+//            model.status = @"1";
+//        }else{
+//            model.money = @"通道名称￥500.00";
+//            model.type = @"失败";
+//            model.status = @"0";
+//        }
+//        [self.listData addObject:model];
+//    }
     
     [self.view addSubview:self.table];
+    [self loadData];
     
 }
 
+
+- (void)loadData{
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{@"userid":UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:receipt_Record withParaments:dic withSuccessBlock:^(id json) {
+        NSArray *arr = [json objectForKey:@"info"];
+        for (NSDictionary *dicc in arr) {
+            receiptRecordModel *model = [receiptRecordModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
+}
 
 
 #pragma mark - table
@@ -71,12 +89,12 @@
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (self.listData.count > 0) {
         static NSString *identifier = @"BillCell";
-        BillModel *model = [self.listData objectAtIndex:indexPath.row];
+        receiptRecordModel *model = [self.listData objectAtIndex:indexPath.row];
         BillCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
             cell = [[BillCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         }
-        [cell setBillmodel:model];
+        [cell setReceiptModel:model];
         
         return cell;
     }else{

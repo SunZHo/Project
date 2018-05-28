@@ -10,4 +10,8 @@
 
 @interface NoticeDetailVC : BaseViewController
 
+@property (nonatomic , copy) NSString *notiID;
+/** 是否是公告通知 */
+@property (nonatomic , assign) BOOL isNoti;
+
 @end

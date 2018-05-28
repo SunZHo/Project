@@ -24,6 +24,8 @@
 #import "AddCreditCardViewController.h"
 #import "RepaymentPlanListVC.h"
 #import "BillViewController.h"
+#import "ChangeCreditCardVC.h"
+#import "AuthorizedView.h"
 
 
 @interface CreditCardRepayVC ()<TYCyclePagerViewDelegate,TYCyclePagerViewDataSource,MeunViewDelegate>
@@ -35,10 +37,19 @@
 @property (nonatomic , strong) UIButton *addRepayBtn;   // 新增还款计划
 @property (nonatomic , strong) UIButton *repayListBtn;  // 还款计划列表
 @property (nonatomic , strong) NoCreditCardView *noCreditView;
+@property (nonatomic , copy) NSString *cardID;// 信用卡id
+@property (nonatomic , copy) NSString *cardNum;// 信用卡号
+@property (nonatomic , assign) BOOL isConfirm ; // 信用卡是否授权
+@property (nonatomic , strong) CreditCardModel *credit_CardModel;
 
 @end
 
 @implementation CreditCardRepayVC
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self loadData];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -49,16 +60,35 @@
     
 //    [self makeUI];
     
-    [self loadData];
     
+//    NSArray *arr = @[@"1000元",@"2000元",@"3000元"];
+//    NSArray *arr1 = @[@"每月1日",@"每月2日",@"每月3日"];
+//    NSArray *arr2 = @[@"每月11日",@"每月12日",@"每月13日"];
+//    for (int i = 0; i < arr.count; i ++) {
+//        CreditCardModel *model = [[CreditCardModel alloc]init];
+//        model.money = arr[i];
+//        model.statement_date = arr1[i];
+//        model.repayment_date = arr2[i];
+//        [self.creditCardData addObject:model];
+//    }
+//    [self makeUI];
+//    if (self.creditCardData.count <= 1) {
+//        self.pagerView.isInfiniteLoop = NO;
+//    }
+//    [self.pagerView reloadData];
     
 }
 
 
 
 - (void)makeUI{
-    [self.pagerView removeFromSuperview];
+    [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+//    [self.pagerView removeFromSuperview];
     self.pagerView = nil;
+    self.moreActionBtn = nil;
+    self.cardRepyView = nil;
+    self.addRepayBtn = nil;
+    self.repayListBtn = nil;
     [self.view addSubview:self.pagerView];
     [self.view addSubview:self.moreActionBtn];
     [self.view addSubview:self.cardRepyView];
@@ -89,25 +119,32 @@
 
 
 - (void)loadData{
-    NSArray *arr = @[@"1000元",@"2000元",@"3000元"];
-    NSArray *arr1 = @[@"每月1日",@"每月2日",@"每月3日"];
-    NSArray *arr2 = @[@"每月11日",@"每月12日",@"每月13日"];
-    for (int i = 0; i < arr.count; i ++) {
-        CreditCardModel *model = [[CreditCardModel alloc]init];
-        model.money = arr[i];
-        model.BillDay = arr1[i];
-        model.repayDay = arr2[i];
-        [self.creditCardData addObject:model];
-    }
-    if (self.creditCardData.count > 0) {
-        [self makeUI];
-        if (self.creditCardData.count <= 1) {
-            self.pagerView.isInfiniteLoop = NO;
+    [self.creditCardData removeAllObjects];
+    NSDictionary *dic = @{@"userid" : UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:creditcard_list withParaments:dic withSuccessBlock:^(id json) {
+        NSArray *infoArr = [json objectForKey:@"info"];
+        if (infoArr.count > 0) {
+            for (NSDictionary *cardDic in infoArr) {
+                CreditCardModel *model = [CreditCardModel mj_objectWithKeyValues:cardDic];
+                [self.creditCardData addObject:model];
+            }
+            [self makeUI];
+            if (self.creditCardData.count <= 1) {
+                self.pagerView.isInfiniteLoop = NO;
+            }
+            [self.pagerView reloadData];
+        }else{
+            [self.noCreditView removeFromSuperview];
+            self.noCreditView = nil;
+            [self.view addSubview:self.noCreditView];
         }
-        [self.pagerView reloadData];
-    }else{
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.noCreditView removeFromSuperview];
+        self.noCreditView = nil;
         [self.view addSubview:self.noCreditView];
-    }
+    }];
+    
     
 }
 
@@ -146,13 +183,26 @@
 
 #pragma mark - 新增还款计划
 - (void)pushRepayPlanVC{
-    AddRepayPlanViewController *repayPlanVc = [[AddRepayPlanViewController alloc]init];
-    PUSHVC(repayPlanVc);
+    if (self.isConfirm) {
+        AddRepayPlanViewController *repayPlanVc = [[AddRepayPlanViewController alloc]init];
+        repayPlanVc.cardid = self.cardID;
+        PUSHVC(repayPlanVc);
+    }else{
+        AuthorizedView *authView = [[AuthorizedView alloc]initWithFrame:CGRectZero andModel:self.credit_CardModel];
+        authView.AuthorizedBlock = ^{
+            [self loadData];
+        };
+        [authView show];
+    }
 }
+
+
 
 #pragma mark - 还款计划列表
 - (void)pushRepayListVC{
     RepaymentPlanListVC *repaymentListVc = [[RepaymentPlanListVC alloc]init];
+    repaymentListVc.cardid = self.cardID;
+    repaymentListVc.isFinish = NO;
     PUSHVC(repaymentListVc);
 }
 
@@ -172,17 +222,37 @@
 
 - (void)meunViewDidSelectedIndex:(NSInteger)index{
     if (index == 0) { // 修改资料
-        
+        ChangeCreditCardVC *changeVc = [[ChangeCreditCardVC alloc]init];
+        changeVc.cardid = self.cardID;
+        changeVc.cardnum = self.cardNum;
+        PUSHVC(changeVc);
     }else if (index == 1){ // 删除信用卡
         
-        [self.creditCardData removeObjectAtIndex:0];
-        [self.pagerView reloadData];
+        [self deleteCreditCard];
         
     }else if (index == 2){ // 已执行计划
-        
+        RepaymentPlanListVC *repaymentListVc = [[RepaymentPlanListVC alloc]init];
+        repaymentListVc.cardid = self.cardID;
+        repaymentListVc.isFinish = YES;
+        PUSHVC(repaymentListVc);
     }
 }
 
+#pragma mark - 删除信用卡
+- (void)deleteCreditCard{
+    NSDictionary *dic = @{@"cardid":self.cardID,
+                          @"userid":UserID
+                          };
+    [self showLoading];
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:creditcard_delCard withParaments:dic withSuccessBlock:^(id json) {
+        [self showSuccessText:@"删除成功"];
+         [self loadData];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
+    
+}
 
 #pragma mark - TYCyclePagerViewDataSource
 
@@ -191,9 +261,9 @@
 }
 
 - (UICollectionViewCell *)pagerView:(TYCyclePagerView *)pagerView cellForItemAtIndex:(NSInteger)index {
-//    CreditCardModel *model = [self.creditCardData objectAtIndex:index];
+    CreditCardModel *model = [self.creditCardData objectAtIndex:index];
     TYCyclePagerViewCell *cell = [pagerView dequeueReusableCellWithReuseIdentifier:@"cellId" forIndex:index];
-//    cell.backgroundColor = randomColor;
+    [cell setCardModel:model];
     
     return cell;
 }
@@ -213,7 +283,10 @@
     NSLog(@"fromIndex-%ld ->  toIndex-%ld",fromIndex,toIndex);
     CreditCardModel *model = [self.creditCardData objectAtIndex:toIndex];
     self.cardRepyView.cardModel = model;
-    
+    self.cardID = model.ID;
+    self.cardNum = model.bank_num;
+    self.isConfirm = [model.is_confirm integerValue] == 0 ? NO : YES;
+    self.credit_CardModel = model;
 }
 
 - (void)pagerView:(TYCyclePagerView *)pageView didSelectedItemCell:(__kindof UICollectionViewCell *)cell atIndex:(NSInteger)index{

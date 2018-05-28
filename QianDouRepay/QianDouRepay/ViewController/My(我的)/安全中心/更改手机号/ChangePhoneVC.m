@@ -7,6 +7,7 @@
 //
 
 #import "ChangePhoneVC.h"
+#import "SafeCenterViewController.h"
 
 @interface ChangePhoneVC ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -15,6 +16,7 @@
 @property (nonatomic , strong) NSMutableArray *formData;
 
 @property (nonatomic , strong) UIView *tableFootView;
+@property (nonatomic , copy) NSString *verifyCode;
 
 @end
 
@@ -83,6 +85,9 @@
     cell.cellTextFieldBlock = ^(NSString *text) {
         [self notiTextField:text andIndex:indexPath];
     };
+    cell.getVerifyCodeBlock = ^{
+        [self getVeirfyCode];
+    };
     
     [cell setFormcellModel:model];
     return cell;
@@ -101,7 +106,56 @@
 
 
 - (void)sureCommit{
+    FormCellModel *model0 = self.formData[0]; // 手机号
+    FormCellModel *model1 = self.formData[1]; // 验证码
     
+    if ([model0.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入手机号"];
+        return;
+    }
+    if ([model1.text isEqualToString:@""]) {
+        [self showErrorText:@"请输入验证码"];
+        return;
+    }
+    if (![model1.text isEqualToString:self.verifyCode]) {
+        [self showErrorText:@"验证码不正确"];
+        return;
+    }
+    
+    NSDictionary *dic = @{@"phone":model0.text,
+                          @"userid":UserID
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_changePhoneUrl withParaments:dic withSuccessBlock:^(id json) {
+        [self showSuccessText:@"修改成功"];
+        [UserInfoDic setObject:model0.text forKey:@"phone"];
+        [UserInfoCache archiveUserInfo:UserInfoDic keyedArchiveName:USER_INFO_CACHE];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            for (UIViewController *controller in self.navigationController.viewControllers) {
+                if ([controller isKindOfClass:[SafeCenterViewController class]]) {
+                    SafeCenterViewController *revise =(SafeCenterViewController *)controller;
+                    [self.navigationController popToViewController:revise animated:YES];
+                }
+            }
+        });
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
+}
+
+
+- (void)getVeirfyCode{
+    FormCellModel *model1 = self.formData[0]; // 手机号
+    [self showLoading];
+    NSDictionary *dic = @{@"phone":model1.text};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_changePhoneNewSMS withParaments:dic withSuccessBlock:^(id json) {
+        [self dismissLoading];
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.verifyCode = [NSString stringWithFormat:@"%ld",[[infoDic objectForKey:@"code"] integerValue]];
+        [[NSNotificationCenter defaultCenter]postNotificationName:CountingDownNotiName object:nil];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
 }
 
 

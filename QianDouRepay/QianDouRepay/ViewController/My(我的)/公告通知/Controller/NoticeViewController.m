@@ -24,6 +24,9 @@
 
 @property (nonatomic , strong) NSMutableArray *listData;
 
+@property (nonatomic , assign) NSInteger page ;
+@property (nonatomic , assign) NSInteger totalpage ;
+
 @end
 
 @implementation NoticeViewController
@@ -31,20 +34,52 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"公告通知";
-    
-    for (int i = 0; i < 20; i++) {
-        NoticeModel *model = [[NoticeModel alloc]init];
-        model.time = @"2017-12-25 20:52";
-        model.title = @"关于还款额度调整公告";
-        [self.listData addObject:model];
-    }
-    
     [self.view addSubview:self.table];
+    [self loadData];
+    
 }
 
+- (void)loadData{
+    self.page = 1;
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{@"page" : [NSString stringWithFormat:@"%ld",self.page]};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_newsInfo withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        self.totalpage  = [[infoDic objectForKey:@"all_page"] integerValue];
+        NSArray *arr = [infoDic objectForKey:@"article"];
+        for (NSDictionary *dicc in arr) {
+            NoticeModel *model = [NoticeModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+}
 
-
-
+- (void)loadMoreData{
+    self.page ++;
+    if (self.page >= self.totalpage) {
+        [self.table.mj_footer endRefreshingWithNoMoreData];
+        return;
+    }
+    NSDictionary *dic = @{@"page" : [NSString stringWithFormat:@"%ld",self.page]};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_newsInfo withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        NSArray *arr = [infoDic objectForKey:@"article"];
+        for (NSDictionary *dicc in arr) {
+            NoticeModel *model = [NoticeModel mj_objectWithKeyValues:dicc];
+            [self.listData addObject:model];
+        }
+        [self.table reloadData];
+        [self.table endRefresh];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        [self.table endRefresh];
+    }];
+}
 
 
 #pragma mark - table
@@ -104,12 +139,17 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    NoticeModel *model = [self.listData objectAtIndex:indexPath.row];
     NoticeDetailVC *detailVc = [[NoticeDetailVC alloc]init];
+    detailVc.notiID = model.ID;
+    detailVc.isNoti = YES;
     PUSHVC(detailVc);
 }
 
 
-
+- (void)endRefresh{
+    [self.table endRefresh];
+}
 
 #pragma mark - LazyLoad
 
@@ -120,6 +160,14 @@
         _table.delegate = self;
         _table.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         _table.backgroundColor = WhiteColor;
+        __weak typeof(&*self)weakSelf = self;
+        _table.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [weakSelf loadData];
+        }];
+        
+        _table.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [weakSelf loadMoreData];
+        }];
     }
     return _table;
 }

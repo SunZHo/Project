@@ -22,8 +22,8 @@
 
 
 - (void)layOutSubV{
-    NSArray *iconArr = @[@"wdzd",@"wdfr",@"wdfl",@"sqxyk",@"bx",@"dk"];
-    NSArray *titleArr = @[@"我的账单",@"我的分润",@"我的费率",@"申请信用卡",@"保险",@"贷款"];
+    NSArray *iconArr = @[@"wysj",@"wdfr",@"wdfl",@"sqxyk",@"bx",@"dk"];
+    NSArray *titleArr = @[@"我要升级",@"我的分润",@"我的费率",@"申请信用卡",@"保险",@"贷款"];
     
     NSInteger columnNum = 3;
     

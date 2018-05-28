@@ -47,7 +47,7 @@
 }
 
 
-- (void)setMyFeeModel:(MyFeeRateModel *)myFeeModel{
+- (void)setMyFeeModel:(MyFeeRateReceiveModel *)myFeeModel{
     _myFeeModel = myFeeModel;
     for (UIView *view in self.contentView.subviews) {
         [view removeFromSuperview];
@@ -59,25 +59,26 @@
     [self.contentView addSubview:self.lineV_10];
     [self layOut];
     
-    self.nameLabel.text = myFeeModel.pathName;
+    self.nameLabel.text = myFeeModel.name;
     
     NSString *D0 , *T_1 , *money , *topMoney;
-    D0 = ([myFeeModel.D0 isEqualToString:@""] || myFeeModel.D0 == nil ? @"--" : myFeeModel.D0);
-    T_1 = ([myFeeModel.T_1 isEqualToString:@""] || myFeeModel.T_1 == nil ? @"--" : myFeeModel.T_1);
-    money = ([myFeeModel.money isEqualToString:@""] || myFeeModel.money == nil ? @"--" : myFeeModel.money);
-    topMoney = ([myFeeModel.topMoney isEqualToString:@""] || myFeeModel.topMoney == nil ? @"--" : myFeeModel.topMoney);
+    NSString *cost = [NSString stringWithFormat:@"%.2f",[myFeeModel.get_cost floatValue]];
+    D0 = [NSString stringWithFormat:@"%@%%+%@元/笔",cost,myFeeModel.get_fee];
+    T_1 = ([myFeeModel.t1 isEqualToString:@""] || myFeeModel.t1 == nil ? @"--" : myFeeModel.t1);
+    money = ([myFeeModel.edu isEqualToString:@""] || myFeeModel.edu == nil ? @"--" : myFeeModel.edu);
+    topMoney = ([myFeeModel.fengd isEqualToString:@""] || myFeeModel.fengd == nil ? @"--" : myFeeModel.fengd);
     
     NSArray *nameArr = @[@"D0交易",@"T+1交易",@"额度",@"封顶值"];
     NSArray *valueArray = @[D0,T_1,money,topMoney];
     
     for (int i = 0; i < nameArr.count; i ++) {
-        UILabel *namelabel = [AppUIKit labelWithTitle:nameArr[i] titleFontSize:12 textColor:defaultTextColor backgroundColor:nil alignment:NSTextAlignmentCenter];
+        UILabel *namelabel = [AppUIKit labelWithTitle:nameArr[i] titleFontSize:11 textColor:defaultTextColor backgroundColor:nil alignment:NSTextAlignmentCenter];
         [self.contentView addSubview:namelabel];
         
-        UILabel *valuelabel = [AppUIKit labelWithTitle:valueArray[i] titleFontSize:12 textColor:defaultTextColor backgroundColor:nil alignment:NSTextAlignmentCenter];
+        UILabel *valuelabel = [AppUIKit labelWithTitle:valueArray[i] titleFontSize:11 textColor:defaultTextColor backgroundColor:nil alignment:NSTextAlignmentCenter];
         [self.contentView addSubview:valuelabel];
         
-        namelabel.sd_layout.topSpaceToView(self.lineV_1, 22).leftSpaceToView(self.contentView, i * SCREEN_WIDTH / 4).widthIs(SCREEN_WIDTH / 4).heightIs(12);
+        namelabel.sd_layout.topSpaceToView(self.lineV_1, 22).leftSpaceToView(self.contentView, i * SCREEN_WIDTH / 4).widthIs(SCREEN_WIDTH / 4 + 10).heightIs(12);
         
         valuelabel.sd_layout.topSpaceToView(namelabel, 12).leftEqualToView(namelabel).widthRatioToView(namelabel, 1).heightRatioToView(namelabel, 1);
     }

@@ -44,9 +44,14 @@
 }
 
 - (void)setInviteModel:(InviteRecordModel *)inviteModel{
-    self.phoneLabel.text = inviteModel.phone;
-    self.stateLabel.text = inviteModel.state;
-    self.timeLabel.text = inviteModel.time;
+    self.phoneLabel.text = [inviteModel.phone stringByReplacingCharactersInRange:NSMakeRange(3, 4) withString:@"****"];
+    if ([inviteModel.is_confirm integerValue] == 1) {
+        self.stateLabel.text = @"已实名";
+    }else{
+        self.stateLabel.text = @"未实名";
+    }
+    
+    self.timeLabel.text = [NSDate timeStringFromTimestamp:[inviteModel.add_time integerValue]formatter:@"yyyy-MM-dd HH:mm"];
 }
 
 

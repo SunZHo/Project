@@ -41,11 +41,21 @@
         [self showErrorText:@"请输入姓名"];
         return;
     }
+    NSDictionary *dic = @{@"userid" : UserID,
+                          @"nickname" : self.nameTF.text
+                          };
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_setNickname withParaments:dic withSuccessBlock:^(id json) {
+        [self showSuccessText:@"设置昵称成功"];
+        [UserInfoDic setObject:self.nameTF.text forKey:@"nickname"];
+        [UserInfoCache archiveUserInfo:UserInfoDic keyedArchiveName:USER_INFO_CACHE];
+        if (self.nickNameBlock) {
+            self.nickNameBlock(self.nameTF.text);
+        }
+        POPVC;
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
     
-    if (self.nickNameBlock) {
-        self.nickNameBlock(self.nameTF.text);
-    }
-    POPVC;
 }
 
 

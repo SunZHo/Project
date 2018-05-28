@@ -22,14 +22,25 @@
 
 @implementation SettingViewController
 
+- (void)viewWillAppear:(BOOL)animated{
+    if ([[UserInfoDic objectForKey:@"sex"] integerValue] == 0 ) {
+        self.sex = @"保密";
+    }else if ([[UserInfoDic objectForKey:@"sex"] integerValue] == 1 ){
+        self.sex = @"男";
+    }else if ([[UserInfoDic objectForKey:@"sex"] integerValue] == 2 ){
+        self.sex = @"女";
+    }
+    self.nickName = [UserInfoDic objectForKey:@"nickname"];
+    [self.table reloadData];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"设置";
     [self wr_setNavBarShadowImageHidden:YES];
     self.cellLabelArray = @[@[@"头像",@"真实姓名",@"身份证号",@"手机号码"],
                             @[@"昵称",@"性别"]];
-    self.sex = @"世界经济";
-    self.nickName = @"硕大的撒";
+    
     [self.view addSubview:self.table];
     
     
@@ -52,6 +63,8 @@
         cell.textLabel.font = kFont(15);
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         [cell.contentView addSubview:self.headImage];
+        [self.headImage sd_setImageWithURL:[NSURL URLWithString:[UserInfoDic objectForKey:@"avatar"]]
+                          placeholderImage:IMG(@"tx")];
         self.headImage.sd_layout.centerYEqualToView(cell.contentView).rightSpaceToView(cell.contentView, 15).heightIs(36).widthIs(36);
         self.headImage.sd_cornerRadiusFromWidthRatio = @(0.5);
         
@@ -60,10 +73,10 @@
     SettingCell *cell = [[SettingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     cell.textLabel.text = [[self.cellLabelArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     if (indexPath.section == 0 && indexPath.row == 1){
-        cell.rightLabel.text  = @"名字";
+        cell.rightLabel.text  = [UserInfoDic objectForKey:@"realname"];
         cell.cellType = cellTypeNormal;
     }else if (indexPath.section == 0 && indexPath.row == 2) {
-        NSString *phoneNum = @"372916199211010010";
+        NSString *phoneNum = [UserInfoDic objectForKey:@"idcard"];
         if (phoneNum.length == 18) {
             cell.rightLabel.text = [phoneNum stringByReplacingCharactersInRange:NSMakeRange(6, 8) withString:@"********"];
         }else{
@@ -71,7 +84,7 @@
         }
         cell.cellType = cellTypeNormal;
     }else if (indexPath.section == 0 && indexPath.row == 3) {
-        NSString *phoneNum = @"13622121122";
+        NSString *phoneNum = [UserInfoDic objectForKey:@"phone"];
         if (phoneNum.length == 11) {
             cell.rightLabel.text = [phoneNum stringByReplacingCharactersInRange:NSMakeRange(3, 4) withString:@"****"];
         }else{
@@ -92,7 +105,7 @@
     if (indexPath.section == 0 && indexPath.row == 0) {
         [BDImagePicker showImagePickerFromViewController:self allowsEditing:YES finishAction:^(UIImage *image) {
             if (image) {
-                self.headImage.image = image;
+                [self uploadImage:image];
             }
         }];
         
@@ -128,24 +141,50 @@
     return 0.1;
 }
 
+
+- (void)uploadImage:(UIImage *)image{
+    __weak typeof(self)weakSelf=self;
+    NSDictionary *dic=@{@"userid":UserID};
+    [self showLoading];
+    [AppNetworking uploadImageWithOperations:dic withImageArray:@[image] withUrlString:my_setHeadPic withFileParameter:@"avatar" withSuccessBlock:^(id json) {
+        weakSelf.headImage.image = image;
+        NSString *pic = [[json objectForKey:@"info"] objectForKey:@"avatar"];
+        [UserInfoDic setObject:pic forKey:@"avatar"];
+        [UserInfoCache archiveUserInfo:UserInfoDic keyedArchiveName:USER_INFO_CACHE];
+        [self showSuccessText:@"设置头像成功"];
+    } withFailureBlock:^(NSError *error) {
+        [weakSelf showErrorText:@"设置失败"];
+    } withUploadProgress:^(float progress) {
+        
+    }];
+}
 #pragma mark - actionSheet
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if (buttonIndex != 3) {
-        self.sex = [actionSheet buttonTitleAtIndex:buttonIndex];
-    }
-    NSIndexPath *indexPath=[NSIndexPath indexPathForRow:1 inSection:1];
-    [self.table reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:UITableViewRowAnimationNone];
+    NSString *type = @"";
     switch (buttonIndex){
         case 0:  //男
-            
+            type = @"1";
             break;
         case 1:  //女
-            
+            type = @"2";
             break;
         case 2:  //保密
-            
+            type = @"0";
             break;
     }
+    NSDictionary *dic=@{@"userid":UserID,
+                        @"sex" : type
+                        };
+    [self showLoading];
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:my_setSex withParaments:dic withSuccessBlock:^(id json) {
+        [self showSuccessText:@"设置成功"];
+        self.sex = [actionSheet buttonTitleAtIndex:buttonIndex];
+        NSIndexPath *indexPath=[NSIndexPath indexPathForRow:1 inSection:1];
+        [self.table reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:UITableViewRowAnimationNone];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
     
 }
 
@@ -168,8 +207,7 @@
 - (UIImageView *)headImage{
     if (!_headImage) {
         _headImage = [[UIImageView alloc]init];
-        _headImage.image = IMG(@"");
-        _headImage.backgroundColor = [UIColor brownColor];
+//        _headImage.backgroundColor = [UIColor brownColor];
     }
     return _headImage;
 }

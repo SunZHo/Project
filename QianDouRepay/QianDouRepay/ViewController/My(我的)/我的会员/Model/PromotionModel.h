@@ -10,10 +10,15 @@
 
 @interface PromotionModel : BaseModel
 
-@property (nonatomic , copy) NSString *name;
-@property (nonatomic , copy) NSString *vipType;
+/** 1-已认证，0-未认证  */
+@property (nonatomic , copy) NSString *is_confirm;
+/** 1-推广会员，0-普通会员  */
+@property (nonatomic , copy) NSString *is_vip;
+/** 手机号  */
 @property (nonatomic , copy) NSString *phone;
-@property (nonatomic , copy) NSString *time;
-@property (nonatomic , copy) NSString *isRealName;
+/** 注册时间 */
+@property (nonatomic , copy) NSString *add_time;
+/** 姓名  */
+@property (nonatomic , copy) NSString *realname;
 
 @end

@@ -12,11 +12,12 @@
 
 @interface FormCell : UITableViewCell
 
-//textField回传值
+/** textField回传值 */ 
 @property (nonatomic, copy) void (^cellTextFieldBlock)(NSString *text);
 
 @property (nonatomic , strong) FormCellModel *formcellModel;
 
-
+/** 获取验证码 */
+@property (nonatomic, copy) void (^getVerifyCodeBlock)(void);
 
 @end

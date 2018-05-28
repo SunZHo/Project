@@ -120,15 +120,16 @@ static NSString *api_version = @"1.0.1";
                 
                 NSDictionary *json = [NSDictionary dictionaryWithDictionary:responseObject];
                 NSInteger code = [[json objectForKey:@"status"] integerValue];
-                if (code == 1) {//成功
+                NSLog(@"请求结果：== %@",json);
+                if (code == 9999) {//成功
                     if (successBlock) {
                         successBlock(responseObject);
                     }
                 }
                 else{
                     if (failureBlock) {
-//                        [XHQHud text:json[@"message"]];
-//                        failureBlock(json[@"message"],0);
+                        [self showErrorText:json[@"message"]];
+                        failureBlock(json[@"message"],0);
                     }
                 }
      
@@ -137,8 +138,8 @@ static NSString *api_version = @"1.0.1";
                 NSData *responseData = underError.userInfo[@"com.alamofire.serialization.response.error.data"];
                 NSString *result = [[NSString alloc] initWithData:responseData  encoding:NSUTF8StringEncoding];
                 if (failureBlock) {
-//                    [XHQHud text:result];
-//                    failureBlock(result,0);
+                    [self showErrorText:@"系统错误"];
+                    failureBlock(@"",0);
                 }
 
             }];
@@ -153,15 +154,16 @@ static NSString *api_version = @"1.0.1";
 
                 NSDictionary *json = [NSDictionary dictionaryWithDictionary:responseObject];
                 NSInteger code = [[json objectForKey:@"status"] integerValue];
-                if (code == 1) {//成功
+                NSLog(@"请求结果：== %@",json);
+                if (code == 9999) {//成功
                     if (successBlock) {
                         successBlock(responseObject);
                     }
                 }
                 else{
                     if (failureBlock) {
-//                        [XHQHud text:json[@"message"]];
-//                        failureBlock(json[@"message"],0);
+                        [self showErrorText:json[@"message"]];
+                        failureBlock(json[@"message"],0);
                     }
                 }
             
@@ -170,7 +172,9 @@ static NSString *api_version = @"1.0.1";
                 NSData *responseData = underError.userInfo[@"com.alamofire.serialization.response.error.data"];
                 NSString *result = [[NSString alloc] initWithData:responseData  encoding:NSUTF8StringEncoding];
                 if (failureBlock) {
-                    failureBlock(error.localizedDescription,0);
+//                    failureBlock(error.localizedDescription,0);
+                    [self showErrorText:@"系统错误"];
+                    failureBlock(@"",0);
                 }
                 NSLog(@"Error结果：%@ ",result);
             }];
@@ -318,6 +322,50 @@ static NSString *api_version = @"1.0.1";
         NSLog(@"Error结果：%@  %@",result,error);
         failureBlock(error);
 //        [self dismissLoading];
+    }];
+}
+
++(void)uploadImageWithOperations:(NSDictionary *)operations
+                  withImageArray:(NSArray *)imageArray
+                   withUrlString:(NSString *)urlString
+               withFileParameter:(NSString *)parameter
+                withSuccessBlock:(HttpRequstSuccess)successBlock
+                withFailureBlock:(HttpRequsetFailure)failureBlock
+              withUploadProgress:(HttpUploadProgress)progress{
+    [self networkStatusIsReachability];
+    
+    [[AppNetworking shareManager] POST:urlString parameters:operations constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        NSUInteger i = 0;
+        /* 出于性能考虑，将上传图片进行压缩 */
+        for (UIImage *image in imageArray) {
+            NSData *imgData = UIImageJPEGRepresentation(image, .5);
+            //在网络开发中，上传文件时，是文件不允许被覆盖，文件重名
+            //要解决此问题
+            //可以在上传时使用当前的系统事件作为文件名
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            //设置时间格式
+            formatter.dateFormat = @"yyyMMddHHmmss";
+            NSString *str = [formatter stringFromDate:[NSDate date]];
+            NSString *fileName = [NSString stringWithFormat:@"%@.png",str];
+            //将得到的二进制图片拼接到表单中  （data：指定上传的二进制流；parameter：服务器端所需参数名）
+            [formData appendPartWithFileData:imgData name:parameter fileName:fileName mimeType:@"image/png"];
+            i ++;
+        }
+    } progress:^(NSProgress * _Nonnull uploadProgress) {
+        float progressfloat = 1.0 *uploadProgress.completedUnitCount/uploadProgress.totalUnitCount;
+        progress(progressfloat);
+        NSLog(@"%f...jindu",progressfloat);
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (successBlock) {
+            successBlock(responseObject);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSError *underError = error.userInfo[@"NSUnderlyingError"];
+        NSData *responseData = underError.userInfo[@"com.alamofire.serialization.response.error.data"];
+        NSString *result = [[NSString alloc] initWithData:responseData  encoding:NSUTF8StringEncoding];
+        NSLog(@"Error结果：%@  %@",result,error);
+        failureBlock(error);
+        //        [self dismissLoading];
     }];
 }
 

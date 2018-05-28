@@ -29,21 +29,39 @@
 
 @implementation BankCardViewController
 
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    [self loadData];
+    
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"银行卡";
-    for (int i = 0; i < 1; i++) {
-        BankCardModel *model = [[BankCardModel alloc]init];
-        model.bankName = @"中国建设银行";
-        model.name = @"刘晓晓";
-        model.bankCardNum = @"6240  ****  ****  ****  123";
-        [self.listData addObject:model];
-    }
+    
     [self.view addSubview:self.table];
     
-    if (self.listData.count > 0) {
-        self.table.tableFooterView = self.tableFootView;
-    }
+    
+}
+
+- (void)loadData{
+    [self.listData removeAllObjects];
+    NSDictionary *dic = @{@"userid":UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:CashCardInfo withParaments:dic withSuccessBlock:^(id json) {
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        BankCardModel *model = [[BankCardModel alloc]init];
+        [model setValuesForKeysWithDictionary:infoDic];
+        model.name = [UserInfoDic objectForKey:@"realname"];
+        [self.listData addObject:model];
+        
+        if (self.listData.count > 0) {
+            self.table.tableFooterView = self.tableFootView;
+        }
+        [self.table reloadData];
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
+    
 }
 
 
@@ -54,7 +72,8 @@
 
 
 - (void)changeCardClick{
-    
+    AddBankCardVC *vc = [[AddBankCardVC alloc]init];
+    PUSHVC(vc);
 }
 
 

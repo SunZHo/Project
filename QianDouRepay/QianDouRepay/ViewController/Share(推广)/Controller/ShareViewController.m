@@ -21,6 +21,8 @@
 
 @property (nonatomic , strong) NSMutableArray *listData;
 
+@property (nonatomic , copy) NSString *shareUrl;
+
 @property (nonatomic , strong) UIScrollView *backGroundScrollV;
 @property (nonatomic , strong) UIImageView *inviteView;
 @property (nonatomic , strong) UIImageView *QRcodeView;
@@ -47,9 +49,21 @@
 }
 
 - (void)loadData{
-    self.listData = [NSMutableArray arrayWithArray:@[@"您邀请的好友注册成功后便会有现金奖励",
+    self.listData = [NSMutableArray arrayWithArray:@[@"您邀请的好友注册成功完成实名认证后便会有奖励",
                                                      @"普通会员达到一定的邀请人数后(通过实名认证)便会自动升级为VIP会员",
                                                      @"如有其他疑问请咨询钱兜代你还客服"]];
+    [self showLoading];
+    NSDictionary *dic = @{@"userid":UserID};
+    [AppNetworking requestWithType:HttpRequestTypePost withUrlString:shareInfoUrl withParaments:dic withSuccessBlock:^(id json) {
+        [self dismissLoading];
+        NSDictionary *infoDic = [json objectForKey:@"info"];
+        [self.QRcodeView sd_setImageWithURL:[NSURL URLWithString:[infoDic objectForKey:@"qrcode"]]];
+        self.rewardLabel.text = [NSString stringWithFormat:@"累计获得奖励：￥%@",[infoDic objectForKey:@"allaward"]];
+        self.shareUrl = [infoDic objectForKey:@"url"];
+        
+    } withFailureBlock:^(NSString *errorMessage, int code) {
+        
+    }];
 }
 
 - (void)makeUI{
@@ -58,7 +72,8 @@
     
     [self.backGroundScrollV addSubview:self.inviteView];
     
-    self.inviteView.sd_layout.topEqualToView(self.backGroundScrollV).leftEqualToView(self.backGroundScrollV).rightEqualToView(self.backGroundScrollV).heightIs(kScaleWidth(837));
+    self.inviteView.sd_layout
+    .topEqualToView(self.backGroundScrollV).leftEqualToView(self.backGroundScrollV).rightEqualToView(self.backGroundScrollV).heightIs(kScaleWidth(837));
     
     [self.inviteView addSubview:self.rewardLabel];
     [self.inviteView addSubview:self.QRcodeView];
@@ -76,12 +91,6 @@
     
     self.table.sd_layout.topSpaceToView(self.inviteImgView, kScaleWidth(25)).leftSpaceToView(self.inviteImgView, 17).rightSpaceToView(self.inviteImgView, 17).bottomSpaceToView(self.inviteImgView, kScaleWidth(12));
     
-    
-    
-    
-    self.rewardLabel.text = @"累计获得奖励：￥0.00";
-    
-    self.QRcodeView.backgroundColor = randomColor;
 }
 
 
@@ -103,6 +112,16 @@
 }
 
 - (void)shareClick{
+    NSString *title = @"钱兜代你还";
+    NSString *describe = @"钱兜代你还，您的信用卡还款小助手。";
+    UIImage *shareImg = IMG(@"loginLogo");
+    NSString *url = self.shareUrl;
+    __weak typeof(self) wself = self;
+    [[AppDelegate new] shareWebPageWithURLStr:url title:title description:describe thumImage:shareImg currentViewController:self callback:^(BOOL success, id responseObject, NSError *error) {
+        if (success) {
+            [wself showSuccessText:@"分享成功"];
+        }
+    }];
     
 }
 
@@ -193,6 +212,7 @@
     if (!_inviteView) {
         _inviteView = [[UIImageView alloc]init];
         _inviteView.image = IMG(@"yqhy");
+        _inviteView.userInteractionEnabled = YES;
 //        _inviteView.contentMode = UIViewContentModeScaleAspectFit;
     }
     return _inviteView;
@@ -202,6 +222,7 @@
     if (!_inviteImgView) {
         _inviteImgView = [[UIImageView alloc]init];
         _inviteImgView.image = IMG(@"yasm");
+        _inviteImgView.userInteractionEnabled = YES;
     }
     return _inviteImgView;
 }
